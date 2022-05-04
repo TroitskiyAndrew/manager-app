@@ -2,6 +2,7 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import { checkToken } from "../services/token.service";
 
 const isAuth: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
+  return next();
   if (req.path = '/auth') {
     return next();
   }
