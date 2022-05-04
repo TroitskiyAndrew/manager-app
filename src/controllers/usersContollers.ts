@@ -4,7 +4,6 @@ import user from '../models/user';
 
 
 export const getItems = async (req: Request, res: Response) => {
-  console.log('try');
   try {
     const items = await user.find({});
     const requestString = req.query.request as string;
