@@ -1,4 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
+import { createError } from "../services/error.service";
 import { checkToken } from "../services/token.service";
 
 const isAuth: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
@@ -12,7 +13,7 @@ const isAuth: RequestHandler = (req: Request, res: Response, next: NextFunction)
       return next();
     }
   }
-  res.status(403).send('Wrong Authorization')
+  return res.send(createError(403, 'Wrong Authorization'));
 }
 
 export default isAuth;

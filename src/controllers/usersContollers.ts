@@ -1,6 +1,7 @@
 import { Response, Request } from 'express';
 import { ObjectId } from 'mongodb';
 import user from '../models/user';
+import { checkBody, createError } from '../services/error.service';
 import { hashPassword } from '../services/hash.service';
 
 
@@ -21,7 +22,7 @@ export const getUserById = async (req: Request, res: Response) => {
     if (item) {
       res.json(item);
     } else {
-      res.status(404).send('User was not founded!');
+      return res.send(createError(404, 'User was not founded!'));
     }
   }
   catch (err) {
@@ -33,12 +34,15 @@ export const getUserById = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   const id = new ObjectId(req.params['id']);
 
-  if (!req.body) return res.sendStatus(400);
+  const bodyError = checkBody(req.body, ['name', 'login', 'password'])
+  if (bodyError) {
+    return res.send(createError(400, bodyError));
+  }
   const { login, name, password } = req.body;
 
   try {
     const hashedPassword = await hashPassword(password);
-    const updatedUser = await user.findOneAndUpdate({ _id: id }, { login: login, name: name, password: hashedPassword }, { new: true });
+    const updatedUser = await user.findOneAndUpdate({ _id: id }, { login, name: name, password: hashedPassword }, { new: true });
     res.json(updatedUser);
   }
   catch (err) { return console.log(err); }
