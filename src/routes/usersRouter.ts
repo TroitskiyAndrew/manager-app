@@ -6,9 +6,9 @@ const jsonParser = express.json();
 
 const usersRouter = express.Router();
 
-usersRouter.get('/', usersContollers.getItems);
+usersRouter.get('/', usersContollers.getUsers);
 
-usersRouter.get('/:id', usersContollers.getItemById);
+usersRouter.get('/:id', usersContollers.getUserById);
 
 usersRouter.post('/', jsonParser, usersContollers.createUser);
 
