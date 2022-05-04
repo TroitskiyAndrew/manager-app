@@ -6,7 +6,7 @@ import authRouter from './routes/authRouter';
 import isAuth from './middleWares/isAuth';
 
 const app = express();
-app.use('/auth', isAuth);
+app.use('/', isAuth);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 

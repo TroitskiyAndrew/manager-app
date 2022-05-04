@@ -2,15 +2,14 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import { checkToken } from "../services/token.service";
 
 const isAuth: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.path);
   if (req.path = '/auth') {
-    next();
+    return next();
   }
   const authHeader = req.header('Authorization');
   if (authHeader) {
     const [type, token] = authHeader.split(' ');
     if (type === 'Bearer' && checkToken(token)) {
-      next();
+      return next();
     }
   }
   res.status(403).send('Wrong Authorization')
