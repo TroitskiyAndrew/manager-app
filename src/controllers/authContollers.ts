@@ -25,9 +25,8 @@ export const signUp = async (req: Request, res: Response) => {
 
   if (!req.body) return res.sendStatus(400);
 
-  const userName = req.body.name;
-  const userAge = req.body.login;
-  const newUser = new user({ name: userName, age: userAge });
+  const { login, name, password } = req.body;
+  const newUser = new user({ login, name, password });
 
   try {
     await newUser.save();
