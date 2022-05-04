@@ -34,6 +34,11 @@ export const signUp = async (req: Request, res: Response) => {
   }
   const { login, name, password } = req.body;
 
+  const foundedUser = await user.findOne({ login });
+  if (foundedUser) {
+    return res.send(createError(402, 'login already exist'));
+  }
+
   const hashedPassword = await hashPassword(password);
 
   const newUser = new user({ login, name, password: hashedPassword });

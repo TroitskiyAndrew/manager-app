@@ -7,8 +7,8 @@ import { hashPassword } from '../services/hash.service';
 
 export const getUsers = async (_: Request, res: Response) => {
   try {
-    const items = await user.find({});
-    res.json(items);
+    const foundedUsers = await user.find({});
+    res.json(foundedUsers);
   } catch (err) {
     console.log(err);
   }
@@ -18,9 +18,9 @@ export const getUserById = async (req: Request, res: Response) => {
 
   const id = new ObjectId(req.params['id']);
   try {
-    const item = await user.findById(id);
-    if (item) {
-      res.json(item);
+    const foundedUser = await user.findById(id);
+    if (foundedUser) {
+      res.json(foundedUser);
     } else {
       return res.send(createError(404, 'User was not founded!'));
     }
@@ -39,6 +39,11 @@ export const updateUser = async (req: Request, res: Response) => {
     return res.send(createError(400, bodyError));
   }
   const { login, name, password } = req.body;
+
+  const foundedUser = await user.findOne({ login });
+  if (foundedUser) {
+    return res.send(createError(402, 'login already exist'));
+  }
 
   try {
     const hashedPassword = await hashPassword(password);
