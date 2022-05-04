@@ -10,9 +10,7 @@ usersRouter.get('/', usersContollers.getUsers);
 
 usersRouter.get('/:id', usersContollers.getUserById);
 
-usersRouter.post('/', jsonParser, usersContollers.createUser);
-
-usersRouter.put('/', jsonParser, usersContollers.updateUser);
+usersRouter.put('/:id', jsonParser, usersContollers.updateUser);
 
 usersRouter.delete('/:id', usersContollers.deleteUser);
 

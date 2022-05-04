@@ -1,6 +1,6 @@
 import { Response, Request } from 'express';
 import user from '../models/user';
-import { checkPassword, hashPassword } from '../services/hash.token';
+import { checkPassword, hashPassword } from '../services/hash.service';
 import { signToken } from '../services/token.service';
 
 export const signIn = async (req: Request, res: Response) => {

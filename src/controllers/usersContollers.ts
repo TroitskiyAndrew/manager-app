@@ -1,6 +1,7 @@
 import { Response, Request } from 'express';
 import { ObjectId } from 'mongodb';
 import user from '../models/user';
+import { hashPassword } from '../services/hash.service';
 
 
 export const getUsers = async (_: Request, res: Response) => {
@@ -11,8 +12,6 @@ export const getUsers = async (_: Request, res: Response) => {
     console.log(err);
   }
 };
-
-
 
 export const getUserById = async (req: Request, res: Response) => {
 
@@ -31,31 +30,17 @@ export const getUserById = async (req: Request, res: Response) => {
 
 };
 
-export const createUser = async (req: Request, res: Response) => {
-
-  if (!req.body) return res.sendStatus(400);
-
-  const userName = req.body.name;
-  const userAge = req.body.login;
-  const newUser = new user({ name: userName, age: userAge });
-
-  try {
-    await newUser.save();
-    res.json(newUser);
-  }
-  catch (err) { return console.log(err); }
-};
-
 export const updateUser = async (req: Request, res: Response) => {
+  const id = new ObjectId(req.params['id']);
 
   if (!req.body) return res.sendStatus(400);
-  const id = new ObjectId(req.body.id);
-  const userName = req.body.name;
-  const userAge = req.body.age;
-  const newUser = { age: userAge, name: userName };
+  const { login, name, password } = req.body;
 
   try {
-    const updatedUser = await user.findOneAndUpdate({ _id: id }, newUser, { new: true });
+    const hashedPassword = await hashPassword(password);
+    console.log(hashedPassword);
+    const updatedUser = await user.findOneAndUpdate({ _id: id }, { login: login, name: name, password: hashedPassword }, { new: true });
+    console.log(updatedUser);
     res.json(updatedUser);
   }
   catch (err) { return console.log(err); }
