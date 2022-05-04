@@ -41,7 +41,7 @@ export const updateUser = async (req: Request, res: Response) => {
   const { login, name, password } = req.body;
 
   const foundedUser = await user.findOne({ login });
-  if (foundedUser) {
+  if (foundedUser && foundedUser.id !== req.params['id']) {
     return res.send(createError(402, 'login already exist'));
   }
 
