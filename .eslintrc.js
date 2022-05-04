@@ -5,6 +5,12 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
+    "airbnb-typescript/base",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -15,8 +21,5 @@ module.exports = {
     '@typescript-eslint',
   ],
   rules: {
-    'eol-last': 0,
-    'linebreak-style': 0,
-    'no-console': 0,
   },
 };
