@@ -2,8 +2,7 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import { checkToken } from "../services/token.service";
 
 const isAuth: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).send(req.path)
-  if (req.path = '/auth') {
+  if (['/auth/signin', '/auth/signup'].includes(req.path)) {
     return next();
   }
   const authHeader = req.header('Authorization');
