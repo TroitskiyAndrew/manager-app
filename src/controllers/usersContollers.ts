@@ -38,9 +38,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
   try {
     const hashedPassword = await hashPassword(password);
-    console.log(hashedPassword);
     const updatedUser = await user.findOneAndUpdate({ _id: id }, { login: login, name: name, password: hashedPassword }, { new: true });
-    console.log(updatedUser);
     res.json(updatedUser);
   }
   catch (err) { return console.log(err); }
