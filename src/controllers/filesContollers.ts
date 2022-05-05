@@ -8,6 +8,9 @@ import file from '../models/file';
 export const getFile = async (req: Request, res: Response) => {
   const path = `files/${req.params.taskId}-${req.params.fileName}`
   fs.readFile(path, (err, file) => {
+    if (err) {
+      return res.send(createError(404, "file not founded"));
+    }
     res.setHeader('Content-Type', 'image/jpeg');
     res.send(file)
   });
