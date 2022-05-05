@@ -6,8 +6,6 @@ import { signToken } from '../services/token.service';
 
 export const signIn = async (req: Request, res: Response) => {
 
-  console.log(req.cookies);
-
   const bodyError = checkBody(req.body, ['login', 'password'])
   if (bodyError) {
     return res.send(createError(400, bodyError));
@@ -26,7 +24,7 @@ export const signIn = async (req: Request, res: Response) => {
       }
       const token = signToken(foundedUser._id, login);
       res.cookie('testToken', signToken, options)
-      return res.send({ token });
+      return res.send({ token, cookie: req.cookies });
     }
   }
 
