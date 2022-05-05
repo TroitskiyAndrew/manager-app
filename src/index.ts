@@ -10,7 +10,7 @@ import cookieParser from 'cookie-parser';
 
 const app = express();
 app.use(cors({ origin: '*' }));
-app.use(cookieParser());
+app.use(cookieParser('coockie-secret'));
 app.use(mung);
 app.use(isAuth);
 app.use('/users', usersRouter);
