@@ -69,9 +69,10 @@ export const updateColumn = async (req: Request, res: Response) => {
 
 export const deleteColumn = async (req: Request, res: Response) => {
 
-  const columnId = new ObjectId(req.params['columnId']);
+  const columnId = req.params['columnId'];
+  const id = new ObjectId(columnId);
   try {
-    const deletedColumn = await column.findByIdAndDelete(columnId);
+    const deletedColumn = await column.findByIdAndDelete(id);
     await task.deleteMany({ columnId });
     res.json(deletedColumn);
   }
