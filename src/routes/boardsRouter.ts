@@ -6,17 +6,17 @@ const jsonParser = express.json();
 
 
 const boardsRouter = express.Router();
-boardsRouter.use('/:id/columns', columnsRouter);
+boardsRouter.use('/:boardId/columns', columnsRouter);
 
 boardsRouter.get('/', boardsContollers.getBoards);
 
-boardsRouter.get('/:id', boardsContollers.getBoardById);
+boardsRouter.get('/:boardId', boardsContollers.getBoardById);
 
 boardsRouter.post('/', jsonParser, boardsContollers.createBoard);
 
-boardsRouter.put('/:id', jsonParser, boardsContollers.updateBoard);
+boardsRouter.put('/:boardId', jsonParser, boardsContollers.updateBoard);
 
-boardsRouter.delete('/:id', boardsContollers.deleteBoard);
+boardsRouter.delete('/:boardId', boardsContollers.deleteBoard);
 
 
 export default boardsRouter;

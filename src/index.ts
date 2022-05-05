@@ -7,6 +7,7 @@ import isAuth from './middleWares/isAuth';
 import cors from 'cors';
 import mung from './middleWares/mung';
 import boardsRouter from './routes/boardsRouter';
+import tasksSetRouter from './routes/tasksSetRouter';
 
 const app = express();
 app.use(cors({ origin: '*' }));
@@ -15,6 +16,7 @@ app.use(isAuth);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/boards', boardsRouter);
+app.use('/tasksSet', tasksSetRouter);
 
 
 

@@ -16,9 +16,9 @@ export const getUsers = async (_: Request, res: Response) => {
 
 export const getUserById = async (req: Request, res: Response) => {
 
-  const id = new ObjectId(req.params['id']);
+  const taskId = new ObjectId(req.params['taskId']);
   try {
-    const foundedUser = await user.findById(id);
+    const foundedUser = await user.findById(taskId);
     if (foundedUser) {
       res.json(foundedUser);
     } else {
@@ -32,7 +32,7 @@ export const getUserById = async (req: Request, res: Response) => {
 };
 
 export const updateUser = async (req: Request, res: Response) => {
-  const id = new ObjectId(req.params['id']);
+  const taskId = new ObjectId(req.params['taskId']);
 
   const bodyError = checkBody(req.body, ['name', 'login', 'password'])
   if (bodyError) {
@@ -41,13 +41,13 @@ export const updateUser = async (req: Request, res: Response) => {
   const { login, name, password } = req.body;
 
   const foundedUser = await user.findOne({ login });
-  if (foundedUser && foundedUser.id !== req.params['id']) {
+  if (foundedUser && foundedUser.id !== req.params['taskId']) {
     return res.send(createError(402, 'login already exist'));
   }
 
   try {
     const hashedPassword = await hashPassword(password);
-    const updatedUser = await user.findOneAndUpdate({ _id: id }, { login, name: name, password: hashedPassword }, { new: true });
+    const updatedUser = await user.findOneAndUpdate({ _id: taskId }, { login, name: name, password: hashedPassword }, { new: true });
     res.json(updatedUser);
   }
   catch (err) { return console.log(err); }
@@ -55,9 +55,9 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
 
-  const id = new ObjectId(req.params.id);
+  const taskId = new ObjectId(req.params.taskId);
   try {
-    const deletedUser = await user.findByIdAndDelete(id);
+    const deletedUser = await user.findByIdAndDelete(taskId);
     res.json(deletedUser);
   }
   catch (err) { return console.log(err); }

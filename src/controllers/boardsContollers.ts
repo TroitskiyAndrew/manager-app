@@ -15,7 +15,7 @@ export const getBoards = async (_: Request, res: Response) => {
 
 export const getBoardById = async (req: Request, res: Response) => {
 
-  const id = new ObjectId(req.params['id']);
+  const id = new ObjectId(req.params['boardId']);
   try {
     const foundedBoards = await await board.findById(id);
     if (foundedBoards) {
@@ -50,7 +50,7 @@ export const createBoard = async (req: Request, res: Response) => {
 };
 
 export const updateBoard = async (req: Request, res: Response) => {
-  const id = new ObjectId(req.params['id']);
+  const id = new ObjectId(req.params['boardId']);
 
   const bodyError = checkBody(req.body, ['title'])
   if (bodyError) {
@@ -67,7 +67,7 @@ export const updateBoard = async (req: Request, res: Response) => {
 
 export const deleteBoard = async (req: Request, res: Response) => {
 
-  const id = new ObjectId(req.params.id);
+  const id = new ObjectId(req.params['boardId']);
   try {
     const deletedBoard = await board.findByIdAndDelete(id);
     res.json(deletedBoard);

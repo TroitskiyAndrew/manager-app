@@ -1,12 +1,14 @@
 import { Response, Request } from 'express';
 import { ObjectId } from 'mongodb';
 import column from '../models/column';
+import task from '../models/task';
 import { checkBody, createError } from '../services/error.service';
 
 
-export const getColumns = async (_: Request, res: Response) => {
+export const getColumns = async (req: Request, res: Response) => {
+  const boardId = req.baseUrl.split('/')[2];
   try {
-    const foundedColumns = await column.find({});
+    const foundedColumns = await column.find({ boardId });
     res.json(foundedColumns);
   } catch (err) {
     console.log(err);
@@ -15,9 +17,9 @@ export const getColumns = async (_: Request, res: Response) => {
 
 export const getColumnById = async (req: Request, res: Response) => {
 
-  const id = new ObjectId(req.params['id']);
+  const columnId = new ObjectId(req.params['columnId']);
   try {
-    const foundedColumns = await await column.findById(id);
+    const foundedColumns = await await column.findById(columnId);
     if (foundedColumns) {
       res.json(foundedColumns);
     } else {
@@ -31,7 +33,7 @@ export const getColumnById = async (req: Request, res: Response) => {
 };
 
 export const createColumn = async (req: Request, res: Response) => {
-
+  const boardId = req.baseUrl.split('/')[2];
   const bodyError = checkBody(req.body, ['title', 'order'])
   if (bodyError) {
     return res.send(createError(400, bodyError));
@@ -39,7 +41,7 @@ export const createColumn = async (req: Request, res: Response) => {
 
   const { title, order } = req.body;
 
-  const newColumn = new column({ title, order });
+  const newColumn = new column({ title, order, boardId });
 
   try {
     await newColumn.save();
@@ -50,7 +52,7 @@ export const createColumn = async (req: Request, res: Response) => {
 };
 
 export const updateColumn = async (req: Request, res: Response) => {
-  const id = new ObjectId(req.params['id']);
+  const columnId = new ObjectId(req.params['columnId']);
 
   const bodyError = checkBody(req.body, ['title', 'order'])
   if (bodyError) {
@@ -59,7 +61,7 @@ export const updateColumn = async (req: Request, res: Response) => {
   const { title, order } = req.body;
 
   try {
-    const updatedColumn = await column.findOneAndUpdate({ _id: id }, { title, order }, { new: true });
+    const updatedColumn = await column.findOneAndUpdate({ _id: columnId }, { title, order }, { new: true });
     res.json(updatedColumn);
   }
   catch (err) { return console.log(err); }
@@ -67,9 +69,10 @@ export const updateColumn = async (req: Request, res: Response) => {
 
 export const deleteColumn = async (req: Request, res: Response) => {
 
-  const id = new ObjectId(req.params.id);
+  const columnId = new ObjectId(req.params['columnId']);
   try {
-    const deletedColumn = await column.findByIdAndDelete(id);
+    const deletedColumn = await column.findByIdAndDelete(columnId);
+    await task.deleteMany({ columnId });
     res.json(deletedColumn);
   }
   catch (err) { return console.log(err); }

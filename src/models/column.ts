@@ -9,6 +9,10 @@ const columnScheme = new Schema({
   order: {
     type: Number,
     required: true,
+  },
+  boardId: {
+    type: String,
+    required: true,
   }
 }, { versionKey: false });
 
