@@ -17,14 +17,7 @@ export const signIn = async (req: Request, res: Response) => {
   if (foundedUser) {
     const isCorrectPassword = await checkPassword(password, foundedUser.password);
     if (isCorrectPassword) {
-      const options = {
-        maxAge: 1000 * 60 * 15, // would expire after 15 minutes
-        httpOnly: true, // The cookie only accessible by the web server
-        signed: true // Indicates if the cookie should be signed
-      }
-      const token = signToken(foundedUser._id, login);
-      res.cookie('testToken', signToken, options)
-      return res.send({ token, cookie: req.cookies });
+      return res.send({ token: signToken(foundedUser._id, login) })
     }
   }
 

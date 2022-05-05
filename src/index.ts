@@ -6,11 +6,9 @@ import authRouter from './routes/authRouter';
 import isAuth from './middleWares/isAuth';
 import cors from 'cors';
 import mung from './middleWares/mung';
-import cookieParser from 'cookie-parser';
 
 const app = express();
 app.use(cors({ origin: '*' }));
-app.use(cookieParser('coockie-secret'));
 app.use(mung);
 app.use(isAuth);
 app.use('/users', usersRouter);
