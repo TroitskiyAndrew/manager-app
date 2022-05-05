@@ -13,4 +13,6 @@ filesRouter.get('/:taskId', filesContollers.getFilesByTask);
 
 filesRouter.post('/', upload.single('file'), filesContollers.uploadFile);
 
+filesRouter.delete('/:fileId', filesContollers.deleteFile);
+
 export default filesRouter;

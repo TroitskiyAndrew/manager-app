@@ -2,6 +2,7 @@ import { Response, Request } from 'express';
 import { createError } from '../services/error.service';
 import fs from 'fs';
 import file from '../models/file';
+import { ObjectId } from 'mongodb';
 
 
 
@@ -34,5 +35,18 @@ export const uploadFile = async (req: Request, res: Response) => {
     return res.send(createError(400, "only images"));
   }
   return res.send(createError(200, 'file uploaded'));
+};
+
+export const deleteFile = async (req: Request, res: Response) => {
+
+  const fileId = new ObjectId(req.params.fileId);
+  try {
+    const deletedFile = await file.findByIdAndDelete(fileId);
+    fs.unlink(deletedFile.path, (err) => {
+      if (err) console.log(err);
+    });
+    res.json(deletedFile);
+  }
+  catch (err) { return console.log(err); }
 };
 
