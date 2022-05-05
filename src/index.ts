@@ -5,10 +5,14 @@ import { PORT } from './constants';
 import authRouter from './routes/authRouter';
 import isAuth from './middleWares/isAuth';
 import cors from 'cors';
+import mung from './middleWares/mung';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 app.use(cors({ origin: '*' }));
-app.use('/', isAuth);
+app.use(cookieParser());
+app.use(mung);
+app.use(isAuth);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 

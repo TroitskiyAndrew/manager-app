@@ -6,6 +6,8 @@ import { signToken } from '../services/token.service';
 
 export const signIn = async (req: Request, res: Response) => {
 
+  console.log(req.cookies);
+
   const bodyError = checkBody(req.body, ['login', 'password'])
   if (bodyError) {
     return res.send(createError(400, bodyError));
@@ -17,7 +19,14 @@ export const signIn = async (req: Request, res: Response) => {
   if (foundedUser) {
     const isCorrectPassword = await checkPassword(password, foundedUser.password);
     if (isCorrectPassword) {
-      return res.send({ token: signToken(foundedUser._id, login), user: foundedUser })
+      const options = {
+        maxAge: 1000 * 60 * 15, // would expire after 15 minutes
+        httpOnly: true, // The cookie only accessible by the web server
+        signed: true // Indicates if the cookie should be signed
+      }
+      const token = signToken(foundedUser._id, login);
+      res.cookie('testToken', signToken, options)
+      return res.send({ token });
     }
   }
 
