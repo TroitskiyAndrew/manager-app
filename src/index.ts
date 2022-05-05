@@ -8,6 +8,7 @@ import cors from 'cors';
 import mung from './middleWares/mung';
 import boardsRouter from './routes/boardsRouter';
 import tasksSetRouter from './routes/tasksSetRouter';
+import filesRouter from './routes/filesRouter';
 
 const app = express();
 app.use(cors({ origin: '*' }));
@@ -17,6 +18,8 @@ app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/boards', boardsRouter);
 app.use('/tasksSet', tasksSetRouter);
+app.use('/file', filesRouter);
+app.use('/files', express.static('files'));
 
 
 
