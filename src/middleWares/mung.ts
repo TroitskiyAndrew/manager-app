@@ -11,10 +11,6 @@ function redact(body: any): any {
     const newBody = {
       ...body._doc
     };
-    if (newBody._id) {
-      newBody.id = newBody._id;
-      delete newBody._id;
-    }
     if (newBody.password) {
       delete newBody.password;
     }
