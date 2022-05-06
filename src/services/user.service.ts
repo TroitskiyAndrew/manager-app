@@ -1,12 +1,12 @@
 import user from '../models/user';
 import { ObjectId } from 'mongodb';
 import * as taskService from './task.service';
-import { io } from './server.service';
+import { socket } from './server.service';
 
 export const createUser = async (params: any) => {
   const newUser = new user(params);
   await newUser.save();
-  io.emit('login', newUser);
+  socket.emit('users', 'add', newUser);
   return newUser;
 }
 
@@ -22,9 +22,11 @@ export const findOneUser = (params: any) => {
   return user.findOne(params);
 }
 
-export const updateUser = (id: string, params: any) => {
+export const updateUser = async (id: string, params: any) => {
   const userId = new ObjectId(id);
-  return user.findByIdAndUpdate(userId, params, { new: true })
+  const updatedUser = await user.findByIdAndUpdate(userId, params, { new: true })
+  socket.emit('users', 'update', updatedUser);
+  return updatedUser;
 }
 
 export const deleteUserById = async (userId: string) => {
@@ -32,5 +34,6 @@ export const deleteUserById = async (userId: string) => {
   const deletedUser = await user.findByIdAndDelete(id);
   await taskService.deleteTaskByParams({ userId });
   await taskService.clearUserInTasks(userId);
+  socket.emit('users', 'remove', deletedUser);
   return deletedUser;
 }

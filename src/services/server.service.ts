@@ -14,7 +14,7 @@ import usersRouter from '../routes/usersRouter';
 
 export const app = express();
 export const server = http.createServer(app);
-export const io = new Server(server, {
+export const socket = new Server(server, {
   cors: {
     origin: '*'
   }

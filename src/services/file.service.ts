@@ -1,10 +1,12 @@
 import file from '../models/file';
 import fs from 'fs';
 import { ObjectId } from 'mongodb';
+import { socket } from './server.service';
 
 export const createFile = async (params: any) => {
   const newFile = new file(params);
   await newFile.save();
+  socket.emit('files', 'add', newFile);
   return newFile;
 }
 
@@ -26,6 +28,7 @@ export const deleteFileById = async (id: string) => {
   fs.unlink(deletedFile.path, (err) => {
     if (err) console.log(err);
   });
+  socket.emit('files', 'remove', deletedFile);
   return deletedFile;
 }
 

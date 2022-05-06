@@ -1,10 +1,12 @@
 import task from '../models/task';
 import { ObjectId } from 'mongodb';
 import * as fileService from '../services/file.service';
+import { socket } from './server.service';
 
 export const createTask = async (params: any) => {
   const newTask = new task(params);
   await newTask.save();
+  socket.emit('tasks', 'add', newTask);
   return newTask;
 }
 
@@ -20,15 +22,18 @@ export const findTasks = (params: any) => {
   return task.find(params);
 }
 
-export const updateTask = (id: string, params: any) => {
+export const updateTask = async (id: string, params: any) => {
   const taskId = new ObjectId(id);
-  return task.findByIdAndUpdate(taskId, params, { new: true })
+  const updatedTask = await task.findByIdAndUpdate(taskId, params, { new: true })
+  socket.emit('tasks', 'update', updatedTask);
+  return updatedTask;
 }
 
 export const deleteTaskById = async (taskId: string) => {
   const id = new ObjectId(taskId);
   const deletedTask = await task.findByIdAndDelete(id);
   await fileService.deletedFilesByTask(taskId);
+  socket.emit('tasks', 'remove', deletedTask);
   return deletedTask;
 }
 
