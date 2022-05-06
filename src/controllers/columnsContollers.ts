@@ -19,7 +19,7 @@ export const getColumnById = async (req: Request, res: Response) => {
     if (foundedColumn) {
       res.json(foundedColumn);
     } else {
-      return res.send(createError(404, 'Column was not founded!'));
+      return res.status(404).send(createError(404, 'Column was not founded!'));
     }
   }
   catch (err) {
@@ -32,7 +32,7 @@ export const createColumn = async (req: Request, res: Response) => {
   const boardId = req.baseUrl.split('/')[2];
   const bodyError = checkBody(req.body, ['title', 'order'])
   if (bodyError) {
-    return res.send(createError(400, bodyError));
+    return res.status(400).send(createError(400, bodyError));
   }
 
   const { title, order } = req.body;
@@ -49,7 +49,7 @@ export const updateColumn = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['title', 'order'])
   if (bodyError) {
-    return res.send(createError(400, bodyError));
+    return res.status(400).send(createError(400, bodyError));
   }
   const { title, order } = req.body;
 

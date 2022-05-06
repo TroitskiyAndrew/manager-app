@@ -21,7 +21,7 @@ export const getTaskById = async (req: Request, res: Response) => {
     if (foundedTask) {
       res.json(foundedTask);
     } else {
-      return res.send(createError(404, 'Task was not founded!'));
+      return res.status(404).send(createError(404, 'Task was not founded!'));
     }
   }
   catch (err) {
@@ -37,7 +37,7 @@ export const createTask = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['title', 'order', 'description', 'userId', 'users'])
   if (bodyError) {
-    return res.send(createError(400, bodyError));
+    return res.status(400).send(createError(400, bodyError));
   }
 
   const { title, order, description, userId, users } = req.body;
@@ -57,7 +57,7 @@ export const updateTask = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['title', 'order', 'description', 'userId', 'boardId', 'columnId', 'users'])
   if (bodyError) {
-    return res.send(createError(400, bodyError));
+    return res.status(400).send(createError(400, bodyError));
   }
   const { title, order, description, userId, boardId, columnId, users } = req.body;
 

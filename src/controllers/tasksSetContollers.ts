@@ -8,23 +8,23 @@ import { checkBody, createError } from '../services/error.service';
 export const updateSetOfTask = async (req: Request, res: Response) => {
   const bodyError = checkBody(req.body, ['tasks'])
   if (bodyError) {
-    return res.send(createError(400, bodyError));
+    return res.status(400).send(createError(400, bodyError));
   }
   const { tasks } = req.body;
   if (tasks.length == 0) {
-    return res.send(createError(400, 'You need at least 1 task'));
+    return res.status(400).send(createError(400, 'You need at least 1 task'));
   }
 
   for (const oneTask of tasks) {
     const taskError = checkBody(oneTask, ['id', 'title', 'order', 'description', 'userId', 'boardId', 'columnId', 'users'])
     if (taskError) {
-      return res.send(createError(400, taskError));
+      return res.status(400).send(createError(400, taskError));
     }
     const { id, order, columnId } = oneTask;
 
     const foundedTasks = await taskService.findTaskById(id);
     if (!foundedTasks) {
-      return res.send(createError(404, 'Task was not founded!'));
+      return res.status(404).send(createError(404, 'Task was not founded!'));
     }
     try {
       await taskService.updateTask(id, { id, order, columnId });
@@ -39,7 +39,7 @@ export const findTasks = async (req: Request, res: Response) => {
   const search = req.query.search as string;
 
   if (!search) {
-    return res.send(createError(400, 'Search request is required'));
+    return res.status(400).send(createError(400, 'Search request is required'));
   }
   try {
     const allTasks = await taskService.findTasks({});

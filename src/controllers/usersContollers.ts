@@ -19,7 +19,7 @@ export const getUserById = async (req: Request, res: Response) => {
     if (foundedUser) {
       res.json(foundedUser);
     } else {
-      return res.send(createError(404, 'User was not founded!'));
+      return res.status(404).send(createError(404, 'User was not founded!'));
     }
   }
   catch (err) {
@@ -33,13 +33,13 @@ export const updateUser = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['name', 'login', 'password'])
   if (bodyError) {
-    return res.send(createError(400, bodyError));
+    return res.status(400).send(createError(400, bodyError));
   }
   const { login, name, password } = req.body;
 
   const foundedUser = await userService.findOneUser({ login });
   if (foundedUser && foundedUser.id !== id) {
-    return res.send(createError(402, 'login already exist'));
+    return res.status(402).send(createError(402, 'login already exist'));
   }
 
   try {

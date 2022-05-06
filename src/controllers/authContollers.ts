@@ -8,7 +8,7 @@ export const signIn = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['login', 'password'])
   if (bodyError) {
-    return res.send(createError(400, bodyError));
+    return res.status(400).send(createError(400, bodyError));
   }
 
   const { login, password } = req.body;
@@ -21,7 +21,7 @@ export const signIn = async (req: Request, res: Response) => {
     }
   }
 
-  return res.send(createError(401, 'Wrong login/pass combination'));
+  return res.status(401).send(createError(401, 'Wrong login/pass combination'));
 
 };
 
@@ -30,17 +30,14 @@ export const signUp = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['name', 'login', 'password'])
   if (bodyError) {
-    return res.send(createError(400, bodyError));
+    return res.status(400).send(createError(400, bodyError));
   }
   const { login, name, password } = req.body;
 
   const foundedUser = await userService.findOneUser({ login });
-  console.log(`C логином ${login} есть юзер ${foundedUser}`)
   if (foundedUser) {
-    console.log('Отменяею запрос');
-    return res.send(createError(402, 'login already exist'));
+    return res.status(402).send(createError(402, 'login already exist'));
   }
-  console.log('Продолжаю');
   const hashedPassword = await hashPassword(password);
 
   try {

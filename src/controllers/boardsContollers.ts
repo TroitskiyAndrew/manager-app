@@ -20,7 +20,7 @@ export const getBoardById = async (req: Request, res: Response) => {
     if (foundedBoards) {
       res.json(foundedBoards);
     } else {
-      return res.send(createError(404, 'Board was not founded!'));
+      return res.status(404).send(createError(404, 'Board was not founded!'));
     }
   }
   catch (err) {
@@ -33,7 +33,7 @@ export const createBoard = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['title'])
   if (bodyError) {
-    return res.send(createError(400, bodyError));
+    return res.status(400).send(createError(400, bodyError));
   }
 
   const { title } = req.body;
@@ -50,7 +50,7 @@ export const updateBoard = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['title'])
   if (bodyError) {
-    return res.send(createError(400, bodyError));
+    return res.status(400).send(createError(400, bodyError));
   }
   const { title } = req.body;
 
