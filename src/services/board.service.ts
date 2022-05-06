@@ -6,7 +6,7 @@ import { socket } from './server.service';
 export const createBoard = async (params: any) => {
   const newBoard = new board(params);
   await newBoard.save();
-  socket.emit('board', 'add', newBoard);
+  socket.emit('boards', 'add', newBoard);
   return newBoard;
 }
 
@@ -21,7 +21,7 @@ export const findBoards = () => {
 export const updateBoard = async (id: string, params: any) => {
   const boardId = new ObjectId(id);
   const updatedBoard = await board.findByIdAndUpdate(boardId, params, { new: true });
-  socket.emit('board', 'add', updatedBoard);
+  socket.emit('boards', 'add', updatedBoard);
   return updatedBoard;
 }
 
@@ -29,5 +29,6 @@ export const deleteBoardById = async (boardId: string) => {
   const id = new ObjectId(boardId);
   const deletedBoard = await board.findByIdAndDelete(id);
   await columnService.deleteColumnByParams({ boardId });
+  socket.emit('boards', 'remove', deletedBoard);
   return deletedBoard;
 }
