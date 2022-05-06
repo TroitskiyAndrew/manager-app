@@ -37,9 +37,10 @@ export const signUp = async (req: Request, res: Response) => {
   const foundedUser = await userService.findOneUser({ login });
   console.log(`C логином ${login} есть юзер ${foundedUser}`)
   if (foundedUser) {
+    console.log('Отменяею запрос');
     return res.send(createError(402, 'login already exist'));
   }
-
+  console.log('Продолжаю');
   const hashedPassword = await hashPassword(password);
 
   try {
