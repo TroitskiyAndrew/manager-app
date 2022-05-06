@@ -1,10 +1,12 @@
 import user from '../models/user';
 import { ObjectId } from 'mongodb';
 import * as taskService from './task.service';
+import { io } from './server.service';
 
 export const createUser = async (params: any) => {
   const newUser = new user(params);
   await newUser.save();
+  io.emit('login', newUser);
   return newUser;
 }
 
