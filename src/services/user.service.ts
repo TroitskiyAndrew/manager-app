@@ -6,6 +6,7 @@ import { io } from './server.service';
 export const createUser = async (params: any) => {
   const newUser = new user(params);
   await newUser.save();
+  console.log(newUser);
   io.emit('login', newUser);
   return newUser;
 }
