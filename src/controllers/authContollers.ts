@@ -42,9 +42,7 @@ export const signUp = async (req: Request, res: Response) => {
   const hashedPassword = await hashPassword(password);
 
   try {
-    console.log({ login, name, password: hashedPassword })
     const newUser = await userService.createUser({ login, name, password: hashedPassword });
-    console.log(newUser);
     res.json(newUser);
   }
   catch (err) { return console.log(err); }
