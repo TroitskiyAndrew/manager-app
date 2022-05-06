@@ -39,7 +39,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
   const foundedUser = await userService.findOneUser({ login });
   if (foundedUser && foundedUser.id !== id) {
-    return res.status(402).send(createError(402, 'login already exist'));
+    return res.status(409).send(createError(409, 'login already exist'));
   }
 
   try {
