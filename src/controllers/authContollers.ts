@@ -36,7 +36,7 @@ export const signUp = async (req: Request, res: Response) => {
 
   const foundedUser = await userService.findOneUser({ login });
   if (foundedUser) {
-    return res.status(402).send(createError(402, 'login already exist'));
+    return res.status(409).send(createError(409, 'login already exist'));
   }
   const hashedPassword = await hashPassword(password);
 
