@@ -35,6 +35,7 @@ export const signUp = async (req: Request, res: Response) => {
   const { login, name, password } = req.body;
 
   const foundedUser = await userService.findOneUser({ login });
+  console.log(`C логином ${login} есть юзер ${foundedUser}`)
   if (foundedUser) {
     return res.send(createError(402, 'login already exist'));
   }
