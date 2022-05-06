@@ -1,14 +1,14 @@
 import { Response, Request } from 'express';
-import { ObjectId } from 'mongodb';
-import task from '../models/task';
+import * as taskService from '../services/task.service';
 import { checkBody, createError } from '../services/error.service';
+
 
 
 export const getTasks = async (req: Request, res: Response) => {
   const boardId = req.baseUrl.split('/')[2];
   const columnId = req.baseUrl.split('/')[4];
   try {
-    const foundedTasks = await task.find({ boardId, columnId });
+    const foundedTasks = await taskService.findOneTask({ boardId, columnId });
     res.json(foundedTasks);
   } catch (err) {
     console.log(err);
@@ -16,12 +16,10 @@ export const getTasks = async (req: Request, res: Response) => {
 };
 
 export const getTaskById = async (req: Request, res: Response) => {
-
-  const taskId = new ObjectId(req.params['taskId']);
   try {
-    const foundedTasks = await task.findById(taskId);
-    if (foundedTasks) {
-      res.json(foundedTasks);
+    const foundedTask = await taskService.findTaskById(req.params['taskId']);
+    if (foundedTask) {
+      res.json(foundedTask);
     } else {
       return res.send(createError(404, 'Task was not founded!'));
     }
@@ -47,11 +45,8 @@ export const createTask = async (req: Request, res: Response) => {
   if (users.length === 0) {
     users.push(userId);
   }
-
-  const newTask = new task({ title, order, description, userId, boardId, columnId, users });
-
   try {
-    await newTask.save();
+    const newTask = await taskService.createTask({ title, order, description, userId, boardId, columnId, users });
     res.json(newTask);
   }
   catch (err) { return console.log(err); }
@@ -59,7 +54,6 @@ export const createTask = async (req: Request, res: Response) => {
 };
 
 export const updateTask = async (req: Request, res: Response) => {
-  const taskId = new ObjectId(req.params['taskId']);
 
   const bodyError = checkBody(req.body, ['title', 'order', 'description', 'userId', 'boardId', 'columnId', 'users'])
   if (bodyError) {
@@ -72,17 +66,15 @@ export const updateTask = async (req: Request, res: Response) => {
   }
 
   try {
-    const updatedTask = await task.findOneAndUpdate({ _id: taskId }, { title, order, description, userId, boardId, columnId, users }, { new: true });
+    const updatedTask = await taskService.updateTask(req.params.taskId, { title, order, description, userId, boardId, columnId, users });
     res.json(updatedTask);
   }
   catch (err) { return console.log(err); }
 };
 
 export const deleteTask = async (req: Request, res: Response) => {
-
-  const taskId = new ObjectId(req.params.taskId);
   try {
-    const deletedTask = await task.findByIdAndDelete(taskId);
+    const deletedTask = await taskService.deleteTaskById(req.params.taskId);
     res.json(deletedTask);
   }
   catch (err) { return console.log(err); }

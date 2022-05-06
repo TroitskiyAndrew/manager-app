@@ -1,14 +1,12 @@
 import { Response, Request } from 'express';
-import { ObjectId } from 'mongodb';
-import column from '../models/column';
-import task from '../models/task';
+import * as columnService from '../services/column.service';
 import { checkBody, createError } from '../services/error.service';
 
 
 export const getColumns = async (req: Request, res: Response) => {
   const boardId = req.baseUrl.split('/')[2];
   try {
-    const foundedColumns = await column.find({ boardId });
+    const foundedColumns = await columnService.findColumns({ boardId });
     res.json(foundedColumns);
   } catch (err) {
     console.log(err);
@@ -16,12 +14,10 @@ export const getColumns = async (req: Request, res: Response) => {
 };
 
 export const getColumnById = async (req: Request, res: Response) => {
-
-  const columnId = new ObjectId(req.params['columnId']);
   try {
-    const foundedColumns = await await column.findById(columnId);
-    if (foundedColumns) {
-      res.json(foundedColumns);
+    const foundedColumn = await columnService.findColumnById(req.params['columnId']);
+    if (foundedColumn) {
+      res.json(foundedColumn);
     } else {
       return res.send(createError(404, 'Column was not founded!'));
     }
@@ -41,10 +37,8 @@ export const createColumn = async (req: Request, res: Response) => {
 
   const { title, order } = req.body;
 
-  const newColumn = new column({ title, order, boardId });
-
   try {
-    await newColumn.save();
+    const newColumn = await columnService.createColumn({ title, order, boardId });
     res.json(newColumn);
   }
   catch (err) { return console.log(err); }
@@ -52,7 +46,6 @@ export const createColumn = async (req: Request, res: Response) => {
 };
 
 export const updateColumn = async (req: Request, res: Response) => {
-  const columnId = new ObjectId(req.params['columnId']);
 
   const bodyError = checkBody(req.body, ['title', 'order'])
   if (bodyError) {
@@ -61,19 +54,15 @@ export const updateColumn = async (req: Request, res: Response) => {
   const { title, order } = req.body;
 
   try {
-    const updatedColumn = await column.findOneAndUpdate({ _id: columnId }, { title, order }, { new: true });
+    const updatedColumn = await columnService.updateColumn(req.params['columnId'], { title, order })
     res.json(updatedColumn);
   }
   catch (err) { return console.log(err); }
 };
 
 export const deleteColumn = async (req: Request, res: Response) => {
-
-  const columnId = req.params['columnId'];
-  const id = new ObjectId(columnId);
   try {
-    const deletedColumn = await column.findByIdAndDelete(id);
-    await task.deleteMany({ columnId });
+    const deletedColumn = await columnService.deleteColumnById(req.params['columnId']);
     res.json(deletedColumn);
   }
   catch (err) { return console.log(err); }

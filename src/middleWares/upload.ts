@@ -1,5 +1,5 @@
 import multer from 'multer';
-import file from '../models/file'
+import * as fileService from '../services/file.service';
 
 const storage = multer.diskStorage({
   destination: (req, file, next) => {
@@ -18,13 +18,13 @@ export const upload = multer({
       const taskId = req.body.taskId;
       const name = fileFromReq.originalname;
       const path = `files/${taskId}-${name}`
-      const existFile = await file.findOne({ taskId, name });
+      const existFile = await fileService.findOneFile({ taskId, name });
       if (existFile) {
         req.params.error = "file exist";
         next(null, false);
       }
-      const newFile = new file({ taskId, name, path })
-      await newFile.save();
+      const newFile = await fileService.createFile({ taskId, name, path });
+      req.params.fileId = newFile._id;
       next(null, true)
     } else {
       req.params.error = "file not allowed";

@@ -1,6 +1,9 @@
 import mung from 'express-mung';
 
 function redact(body: any): any {
+  if (!body) {
+    return body;
+  }
   if (Array.isArray(body)) {
     return body.map(item => redact(item));
   }

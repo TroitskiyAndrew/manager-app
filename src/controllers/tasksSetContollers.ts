@@ -1,7 +1,7 @@
 import { Response, Request } from 'express';
 import { ObjectId } from 'mongodb';
-import task from '../models/task';
-import user from '../models/user';
+import * as taskService from '../services/task.service';
+import * as userService from '../services/user.service';
 import { checkBody, createError } from '../services/error.service';
 
 
@@ -22,13 +22,12 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
     }
     const { id, order, columnId } = oneTask;
 
-    const idOfTask = new ObjectId(id);
-    const foundedTasks = await task.findById(idOfTask);
+    const foundedTasks = await taskService.findTaskById(id);
     if (!foundedTasks) {
       return res.send(createError(404, 'Task was not founded!'));
     }
     try {
-      await task.findOneAndUpdate({ _id: id }, { id, order, columnId }, { new: true });
+      await taskService.updateTask(id, { id, order, columnId });
     }
     catch (err) { return console.log(err); }
   }
@@ -43,8 +42,8 @@ export const findTasks = async (req: Request, res: Response) => {
     return res.send(createError(400, 'Search request is required'));
   }
   try {
-    const allTasks = await task.find();
-    const allUsers = await user.find();
+    const allTasks = await taskService.findTasks({});
+    const allUsers = await userService.findUsers();
     res.json(allTasks.filter(oneTask => {
       const searchRequest = search.toUpperCase();
       if (oneTask.title.toUpperCase().includes(searchRequest)) {

@@ -1,5 +1,5 @@
 import { Response, Request } from 'express';
-import user from '../models/user';
+import * as userService from '../services/user.service';
 import { checkBody, createError } from '../services/error.service';
 import { checkPassword, hashPassword } from '../services/hash.service';
 import { signToken } from '../services/token.service';
@@ -13,7 +13,7 @@ export const signIn = async (req: Request, res: Response) => {
 
   const { login, password } = req.body;
 
-  const foundedUser = await user.findOne({ login });
+  const foundedUser = await userService.findOneUser({ login });
   if (foundedUser) {
     const isCorrectPassword = await checkPassword(password, foundedUser.password);
     if (isCorrectPassword) {
@@ -34,17 +34,15 @@ export const signUp = async (req: Request, res: Response) => {
   }
   const { login, name, password } = req.body;
 
-  const foundedUser = await user.findOne({ login });
+  const foundedUser = await userService.findOneUser({ login });
   if (foundedUser) {
     return res.send(createError(402, 'login already exist'));
   }
 
   const hashedPassword = await hashPassword(password);
 
-  const newUser = new user({ login, name, password: hashedPassword });
-
   try {
-    await newUser.save();
+    const newUser = await userService.createUser({ login, name, password: hashedPassword });
     res.json(newUser);
   }
   catch (err) { return console.log(err); }

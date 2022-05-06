@@ -1,8 +1,7 @@
 import { Response, Request } from 'express';
 import { createError } from '../services/error.service';
 import fs from 'fs';
-import file from '../models/file';
-import { ObjectId } from 'mongodb';
+import * as fileService from '../services/file.service';
 
 
 
@@ -20,7 +19,7 @@ export const getFile = async (req: Request, res: Response) => {
 export const getFilesByTask = async (req: Request, res: Response) => {
   const taskId = req.params.taskId;
   try {
-    const files = await file.find({ taskId });
+    const files = await fileService.findFiles({ taskId });
     res.json(files);
   } catch (error) {
 
@@ -34,17 +33,12 @@ export const uploadFile = async (req: Request, res: Response) => {
   } else if (req.params.error === "file not allowed") {
     return res.send(createError(400, "only images"));
   }
-  return res.send(createError(200, 'file uploaded'));
+  return res.json(await fileService.getFileById(req.params.fileId));
 };
 
 export const deleteFile = async (req: Request, res: Response) => {
-
-  const fileId = new ObjectId(req.params.fileId);
   try {
-    const deletedFile = await file.findByIdAndDelete(fileId);
-    fs.unlink(deletedFile.path, (err) => {
-      if (err) console.log(err);
-    });
+    const deletedFile = await fileService.deleteFileById(req.params.fileId);
     res.json(deletedFile);
   }
   catch (err) { return console.log(err); }

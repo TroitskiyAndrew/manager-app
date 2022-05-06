@@ -1,14 +1,12 @@
 import { Response, Request } from 'express';
 import { ObjectId } from 'mongodb';
-import board from '../models/board';
-import column from '../models/column';
-import task from '../models/task';
+import * as boardService from '../services/board.service';
 import { checkBody, createError } from '../services/error.service';
 
 
 export const getBoards = async (_: Request, res: Response) => {
   try {
-    const foundedBoards = await board.find({});
+    const foundedBoards = await boardService.findBoards();
     res.json(foundedBoards);
   } catch (err) {
     console.log(err);
@@ -17,9 +15,8 @@ export const getBoards = async (_: Request, res: Response) => {
 
 export const getBoardById = async (req: Request, res: Response) => {
 
-  const boardId = new ObjectId(req.params['boardId']);
   try {
-    const foundedBoards = await await board.findById(boardId);
+    const foundedBoards = await boardService.findBoardById(req.params['boardId']);
     if (foundedBoards) {
       res.json(foundedBoards);
     } else {
@@ -40,11 +37,8 @@ export const createBoard = async (req: Request, res: Response) => {
   }
 
   const { title } = req.body;
-
-  const newBoard = new board({ title });
-
   try {
-    await newBoard.save();
+    const newBoard = await boardService.createBoard({ title });
     res.json(newBoard);
   }
   catch (err) { return console.log(err); }
@@ -61,7 +55,7 @@ export const updateBoard = async (req: Request, res: Response) => {
   const { title } = req.body;
 
   try {
-    const updatedBoard = await board.findOneAndUpdate({ _id: boardId }, { title }, { new: true });
+    const updatedBoard = await boardService.updateBoard(req.params['boardId'], { title });
     res.json(updatedBoard);
   }
   catch (err) { return console.log(err); }
@@ -69,12 +63,8 @@ export const updateBoard = async (req: Request, res: Response) => {
 
 export const deleteBoard = async (req: Request, res: Response) => {
 
-  const boardId = req.params['boardId'];
-  const id = new ObjectId(boardId);
   try {
-    const deletedBoard = await board.findByIdAndDelete(id);
-    await column.deleteMany({ boardId });
-    await task.deleteMany({ boardId });
+    const deletedBoard = await boardService.deleteBoardById(req.params['boardId']);
     res.json(deletedBoard);
   }
   catch (err) { return console.log(err); }
