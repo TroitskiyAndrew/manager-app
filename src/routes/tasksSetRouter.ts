@@ -8,6 +8,8 @@ const tasksSetRouter = express.Router();
 
 tasksSetRouter.patch('/', jsonParser, tasksSetContollers.updateSetOfTask);
 
-tasksSetRouter.get('/', jsonParser, tasksSetContollers.findTasks);
+tasksSetRouter.get('/', tasksSetContollers.findTasks);
+
+tasksSetRouter.get('/:boardId', tasksSetContollers.getTasksByBoard);
 
 export default tasksSetRouter;
