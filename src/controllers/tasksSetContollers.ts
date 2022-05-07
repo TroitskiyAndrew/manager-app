@@ -69,7 +69,7 @@ export const findTasks = async (req: Request, res: Response) => {
 export const getTasksByBoard = async (req: Request, res: Response) => {
   const boardId = req.params.boardId;
   try {
-    const foundedTasks = await taskService.findOneTask({ boardId });
+    const foundedTasks = await taskService.findTasks({ boardId });
     res.json(foundedTasks);
   } catch (err) {
     console.log(err);
