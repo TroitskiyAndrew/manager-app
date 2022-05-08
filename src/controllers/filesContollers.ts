@@ -16,10 +16,10 @@ export const getFile = async (req: Request, res: Response) => {
   });
 };
 
-export const getFilesByTask = async (req: Request, res: Response) => {
-  const taskId = req.params.taskId;
+export const getFilesByBoard = async (req: Request, res: Response) => {
+  const boardId = req.params.boardId;
   try {
-    const files = await fileService.findFiles({ taskId });
+    const files = await fileService.findFiles({ boardId });
     res.json(files);
   } catch (error) {
 
@@ -32,6 +32,8 @@ export const uploadFile = async (req: Request, res: Response) => {
     return res.status(402).send(createError(402, "file exist"));
   } else if (req.params.error === "file not allowed") {
     return res.status(400).send(createError(400, "only images"));
+  } else if (req.params.error) {
+    return res.status(400).send(createError(400, req.params.error));
   }
   return res.json(await fileService.getFileById(req.params.fileId));
 };
