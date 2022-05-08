@@ -22,7 +22,7 @@ export const upload = multer({
         next(null, false);
       }
       const taskId = req.body.taskId;
-      const boardId = req.body.taskId;
+      const boardId = req.body.boardId;
       const name = fileFromReq.originalname;
       const path = `files/${taskId}-${name}`
       const existFile = await fileService.findOneFile({ taskId, name });
