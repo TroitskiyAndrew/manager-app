@@ -21,7 +21,7 @@ export const findBoards = () => {
 export const updateBoard = async (id: string, params: any) => {
   const boardId = new ObjectId(id);
   const updatedBoard = await board.findByIdAndUpdate(boardId, params, { new: true });
-  socket.emit('boards', 'add', updatedBoard);
+  socket.emit('boards', 'update', updatedBoard);
   return updatedBoard;
 }
 

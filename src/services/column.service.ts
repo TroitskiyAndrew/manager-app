@@ -25,7 +25,7 @@ export const findColumns = (params: any) => {
 export const updateColumn = async (id: string, params: any) => {
   const columnId = new ObjectId(id);
   const updatedColumn = await column.findByIdAndUpdate(columnId, params, { new: true })
-  socket.emit('columns', 'add', updatedColumn);
+  socket.emit('columns', 'update', updatedColumn);
   return updatedColumn;
 }
 
