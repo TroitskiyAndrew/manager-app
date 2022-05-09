@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { SECRET_KEY } from '../constants';
 
 export const signToken = (id: string, login: string) => {
-  return jwt.sign({ id, login }, SECRET_KEY, { expiresIn: '60m' });
+  return jwt.sign({ id, login }, SECRET_KEY, { expiresIn: '720m' });
 }
 
 export const checkToken = (token: string) => {
