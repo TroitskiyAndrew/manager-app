@@ -16,11 +16,6 @@ export const upload = multer({
   storage: storage,
   fileFilter: async (req, fileFromReq, next) => {
     if (fileFromReq.mimetype == 'image/png' || fileFromReq.mimetype == 'image/jpeg') {
-      const bodyError = checkBody(req.body, ['taskId', 'boardId']);
-      if (bodyError) {
-        req.params.error = bodyError;
-        next(null, false);
-      }
       const taskId = req.body.taskId;
       const boardId = req.body.boardId;
       const name = fileFromReq.originalname;
