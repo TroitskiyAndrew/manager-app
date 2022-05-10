@@ -7,7 +7,6 @@ import { socket } from '../services/server.service';
 
 
 export const updateSetOfTask = async (req: Request, res: Response) => {
-  console.log('Апгрейдим набор тасок');
   const bodyError = checkBody(req.body, ['tasks'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -32,13 +31,13 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
       updatedTasks.push(await taskService.updateTask(_id, { order, columnId }, false));
     }
     catch (err) { return console.log(err); }
-    console.log('набор тасок');
-    socket.emit('tasks', {
-      action: 'edited',
-      notify: false,
-      tasks: updatedTasks,
-    });
+
   }
+  socket.emit('tasks', {
+    action: 'edited',
+    notify: false,
+    tasks: updatedTasks,
+  });
   return res.send(createError(200, 'Tasks was updated!'));
 
 };
