@@ -52,7 +52,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
-    const deletedUser = await userService.deleteUserById(req.params.id, true, false);
+    const deletedUser = await userService.deleteUserById(req.params.id);
     res.json(deletedUser);
   }
   catch (err) { return console.log(err); }

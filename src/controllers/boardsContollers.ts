@@ -46,7 +46,6 @@ export const createBoard = async (req: Request, res: Response) => {
 };
 
 export const updateBoard = async (req: Request, res: Response) => {
-  const boardId = new ObjectId(req.params['boardId']);
 
   const bodyError = checkBody(req.body, ['title'])
   if (bodyError) {
