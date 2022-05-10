@@ -21,14 +21,14 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
     if (taskError) {
       return res.status(400).send(createError(400, taskError));
     }
-    const { id, order, columnId } = oneTask;
+    const { _id, order, columnId } = oneTask;
 
-    const foundedTasks = await taskService.findTaskById(id);
+    const foundedTasks = await taskService.findTaskById(_id);
     if (!foundedTasks) {
       return res.status(404).send(createError(404, 'Task was not founded!'));
     }
     try {
-      updatedTasks.push(await taskService.updateTask(id, { id, order, columnId }, false));
+      updatedTasks.push(await taskService.updateTask(_id, { order, columnId }, false));
     }
     catch (err) { return console.log(err); }
     socket.emit('tasks', {
