@@ -32,7 +32,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
     }
     catch (err) { return console.log(err); }
     socket.emit('tasks', {
-      action: 'deleted',
+      action: 'edited',
       notify: false,
       tasks: updatedTasks,
     });

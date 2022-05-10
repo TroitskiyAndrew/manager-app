@@ -30,7 +30,9 @@ export const findTasks = (params: any) => {
 
 export const updateTask = async (id: string, params: any, emit = true, notify = true) => {
   const taskId = new ObjectId(id);
+  console.log(id, params)
   const updatedTask = await task.findByIdAndUpdate(taskId, params, { new: true })
+  console.log(updatedTask)
   if (emit) {
     socket.emit('tasks', {
       action: 'edited',
