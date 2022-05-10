@@ -7,6 +7,7 @@ import { socket } from '../services/server.service';
 
 
 export const updateSetOfTask = async (req: Request, res: Response) => {
+  console.log('Апгрейдим набор тасок');
   const bodyError = checkBody(req.body, ['tasks'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
