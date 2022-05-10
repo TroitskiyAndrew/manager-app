@@ -17,7 +17,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
   }
   const updatedTasks = [];
   for (const oneTask of tasks) {
-    const taskError = checkBody(oneTask, ['id', 'title', 'order', 'description', 'userId', 'boardId', 'columnId', 'users'])
+    const taskError = checkBody(oneTask, ['_id', 'title', 'order', 'description', 'userId', 'boardId', 'columnId', 'users'])
     if (taskError) {
       return res.status(400).send(createError(400, taskError));
     }
