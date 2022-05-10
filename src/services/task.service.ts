@@ -3,10 +3,16 @@ import { ObjectId } from 'mongodb';
 import * as fileService from '../services/file.service';
 import { socket } from './server.service';
 
-export const createTask = async (params: any) => {
+export const createTask = async (params: any, emit = true, notify = true) => {
   const newTask = new task(params);
   await newTask.save();
-  socket.emit('tasks', 'add', newTask);
+  if (emit) {
+    socket.emit('tasks', {
+      action: 'added',
+      notify: notify,
+      tasks: [newTask]
+    });
+  }
   return newTask;
 }
 
@@ -22,35 +28,62 @@ export const findTasks = (params: any) => {
   return task.find(params);
 }
 
-export const updateTask = async (id: string, params: any, notif = true) => {
+export const updateTask = async (id: string, params: any, emit = true, notify = true) => {
   const taskId = new ObjectId(id);
   const updatedTask = await task.findByIdAndUpdate(taskId, params, { new: true })
-  socket.emit('tasks', 'update', updatedTask, notif);
+  if (emit) {
+    socket.emit('tasks', {
+      action: 'edited',
+      notify: notify,
+      tasks: [updatedTask]
+    });
+  }
   return updatedTask;
 }
 
-export const deleteTaskById = async (taskId: string) => {
+export const deleteTaskById = async (taskId: string, emit = true, notify = true) => {
   const id = new ObjectId(taskId);
   const deletedTask = await task.findByIdAndDelete(id);
   await fileService.deletedFilesByTask(taskId);
-  socket.emit('tasks', 'remove', deletedTask);
+  if (emit) {
+    socket.emit('tasks', {
+      action: 'deleted',
+      notify: notify,
+      tasks: [deletedTask]
+    });
+  }
   return deletedTask;
 }
 
 export const deleteTaskByParams = async (params: any) => {
   const tasks = await task.find(params);
+  const deletedTasks = [];
   for (const onTask of tasks) {
-    deleteTaskById(onTask._id);
+    deletedTasks.push(await deleteTaskById(onTask._id, false));
   }
+  socket.emit('tasks', {
+    action: 'deleted',
+    notify: false,
+    tasks: deletedTasks,
+  });
 }
 
 export const clearUserInTasks = async (userId: string) => {
   const tasks = await task.find({});
+  const clearedTasks = [];
   for (const onTask of tasks) {
     const userIndex = onTask.users.findIndex((item: string) => item == userId)
     if (userIndex > 0) {
       onTask.users.splice(userIndex, 1);
-      updateTask(onTask._id, { users: onTask.users });
+      if (onTask.users.length === 0) {
+        onTask.users.push(onTask.userId)
+      }
+      clearedTasks.push(await updateTask(onTask._id, { users: onTask.users, emit: false }));
     }
   }
+  socket.emit('tasks', {
+    action: 'edited',
+    notify: false,
+    tasks: clearedTasks,
+  });
 }

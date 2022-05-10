@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import * as taskService from '../services/task.service';
 import * as userService from '../services/user.service';
 import { checkBody, createError } from '../services/error.service';
+import { socket } from '../services/server.service';
 
 
 export const updateSetOfTask = async (req: Request, res: Response) => {
@@ -14,7 +15,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
   if (tasks.length == 0) {
     return res.status(400).send(createError(400, 'You need at least 1 task'));
   }
-
+  const updatedTasks = [];
   for (const oneTask of tasks) {
     const taskError = checkBody(oneTask, ['id', 'title', 'order', 'description', 'userId', 'boardId', 'columnId', 'users'])
     if (taskError) {
@@ -27,9 +28,14 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
       return res.status(404).send(createError(404, 'Task was not founded!'));
     }
     try {
-      taskService.updateTask(id, { id, order, columnId }, false);
+      updatedTasks.push(await taskService.updateTask(id, { id, order, columnId }, false));
     }
     catch (err) { return console.log(err); }
+    socket.emit('tasks', {
+      action: 'deleted',
+      notify: false,
+      tasks: updatedTasks,
+    });
   }
   return res.send(createError(200, 'Tasks was updated!'));
 
