@@ -27,7 +27,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
       return res.status(404).send(createError(404, 'Task was not founded!'));
     }
     try {
-      await taskService.updateTask(id, { id, order, columnId });
+      taskService.updateTask(id, { id, order, columnId }, false);
     }
     catch (err) { return console.log(err); }
   }

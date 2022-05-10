@@ -22,10 +22,10 @@ export const findTasks = (params: any) => {
   return task.find(params);
 }
 
-export const updateTask = async (id: string, params: any) => {
+export const updateTask = async (id: string, params: any, notif = true) => {
   const taskId = new ObjectId(id);
   const updatedTask = await task.findByIdAndUpdate(taskId, params, { new: true })
-  socket.emit('tasks', 'update', updatedTask);
+  socket.emit('tasks', notif ? 'update' : 'update silent', updatedTask);
   return updatedTask;
 }
 
