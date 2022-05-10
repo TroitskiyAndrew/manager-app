@@ -31,6 +31,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
       updatedTasks.push(await taskService.updateTask(_id, { order, columnId }, false));
     }
     catch (err) { return console.log(err); }
+    console.log('набор тасок');
     socket.emit('tasks', {
       action: 'edited',
       notify: false,
