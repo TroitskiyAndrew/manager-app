@@ -8,7 +8,7 @@ export const getTasks = async (req: Request, res: Response) => {
   const boardId = req.baseUrl.split('/')[2];
   const columnId = req.baseUrl.split('/')[4];
   try {
-    const foundedTasks = await taskService.findOneTask({ boardId, columnId });
+    const foundedTasks = await taskService.findTasks({ boardId, columnId });
     res.json(foundedTasks);
   } catch (err) {
     console.log(err);
