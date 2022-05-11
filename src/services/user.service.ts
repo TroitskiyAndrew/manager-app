@@ -46,7 +46,7 @@ export const deleteUserById = async (userId: string, emit = true, notify = false
   const id = new ObjectId(userId);
   const deletedUser = await user.findByIdAndDelete(id);
   taskService.deleteTaskByParams({ userId });
-  boardService.deleteBoardByParams({ userId });
+  boardService.deleteBoardByParams({ owner: userId });
   taskService.clearUserInTasks(userId);
   if (emit) {
     socket.emit('users', {

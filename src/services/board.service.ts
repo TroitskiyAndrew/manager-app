@@ -57,11 +57,7 @@ export const deleteBoardById = async (boardId: string, emit = true, notify = tru
 }
 
 export const deleteBoardByParams = async (params: any) => {
-  console.log('params', params);
   const boards = await board.find(params);
-  console.log('найдейно', boards.length)
-  const allBoards = await board.find(params);
-  console.log('из', allBoards.length)
   const deletedBoards = [];
   for (const onBoard of boards) {
     deletedBoards.push(await deleteBoardById(onBoard._id, false));
@@ -70,5 +66,22 @@ export const deleteBoardByParams = async (params: any) => {
     action: 'deleted',
     notify: false,
     columns: deletedBoards
+  });
+}
+
+export const clearUserInBoards = async (userId: string) => {
+  const boards = await board.find({});
+  const clearedBoards = [];
+  for (const onBoard of boards) {
+    const userIndex = onBoard.users.findIndex((item: string) => item == userId)
+    if (userIndex > 0) {
+      onBoard.users.splice(userIndex, 1);
+      clearedBoards.push(await updateBoard(onBoard._id, { users: onBoard.users, emit: false }));
+    }
+  }
+  socket.emit('boards', {
+    action: 'edited',
+    notify: false,
+    tasks: clearedBoards,
   });
 }
