@@ -1,6 +1,7 @@
 import task from '../models/task';
 import { ObjectId } from 'mongodb';
 import * as fileService from '../services/file.service';
+import * as pointService from '../services/point.service';
 import { socket } from './server.service';
 
 export const createTask = async (params: any, emit = true, notify = true) => {
@@ -44,7 +45,8 @@ export const updateTask = async (id: string, params: any, emit = true, notify = 
 export const deleteTaskById = async (taskId: string, emit = true, notify = true) => {
   const id = new ObjectId(taskId);
   const deletedTask = await task.findByIdAndDelete(id);
-  await fileService.deletedFilesByTask(taskId);
+  fileService.deletedFilesByTask(taskId);
+  pointService.deletePointsByParams({ taskId });
   if (emit) {
     socket.emit('tasks', {
       action: 'deleted',

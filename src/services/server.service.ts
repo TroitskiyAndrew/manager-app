@@ -12,6 +12,7 @@ import tasksSetRouter from '../routes/tasksSetRouter';
 import usersRouter from '../routes/usersRouter';
 import boardsSetRouter from '../routes/boardsSetRouter';
 import columnsSetRouter from '../routes/columnsSetRouter';
+import pointsRouter from '../routes/pointsRouter';
 
 
 export const app = express();
@@ -31,4 +32,5 @@ app.use('/boardsSet', boardsSetRouter);
 app.use('/columnsSet', columnsSetRouter);
 app.use('/tasksSet', tasksSetRouter);
 app.use('/file', filesRouter);
+app.use('/points', pointsRouter);
 app.use('/files', express.static('files'));
