@@ -30,7 +30,7 @@ export const getColumnById = async (req: Request, res: Response) => {
 
 export const createColumn = async (req: Request, res: Response) => {
   const boardId = req.baseUrl.split('/')[2];
-  const bodyError = checkBody(req.body, ['title', 'order'])
+  const bodyError = checkBody(req.body, ['title', 'order', 'boardId'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
   }
@@ -47,7 +47,7 @@ export const createColumn = async (req: Request, res: Response) => {
 
 export const updateColumn = async (req: Request, res: Response) => {
 
-  const bodyError = checkBody(req.body, ['title', 'order'])
+  const bodyError = checkBody(req.body, ['title', 'order', 'boardId'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
   }

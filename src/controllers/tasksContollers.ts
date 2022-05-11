@@ -35,7 +35,7 @@ export const createTask = async (req: Request, res: Response) => {
   const boardId = req.baseUrl.split('/')[2];
   const columnId = req.baseUrl.split('/')[4];
 
-  const bodyError = checkBody(req.body, ['title', 'order', 'description', 'userId', 'users'])
+  const bodyError = checkBody(req.body, ['title', 'order', 'description', 'userId', 'boardId', 'columnId', 'users'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
   }
