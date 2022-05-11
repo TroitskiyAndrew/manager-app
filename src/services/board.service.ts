@@ -57,7 +57,11 @@ export const deleteBoardById = async (boardId: string, emit = true, notify = tru
 }
 
 export const deleteBoardByParams = async (params: any) => {
+  console.log('params', params);
   const boards = await board.find(params);
+  console.log('найдейно', boards.length)
+  const allBoards = await board.find(params);
+  console.log('из', allBoards.length)
   const deletedBoards = [];
   for (const onBoard of boards) {
     deletedBoards.push(await deleteBoardById(onBoard._id, false));
