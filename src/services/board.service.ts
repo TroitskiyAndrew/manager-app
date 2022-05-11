@@ -24,6 +24,11 @@ export const findBoards = () => {
   return board.find({});
 }
 
+export const findBoardsByUser = async (userId: string) => {
+  const allBoards = await board.find({});
+  return allBoards.filter(item => item.owner === userId || item.users.includes(userId))
+}
+
 export const updateBoard = async (id: string, params: any, emit = true, notify = true) => {
   const boardId = new ObjectId(id);
   const updatedBoard = await board.findByIdAndUpdate(boardId, params, { new: true });
@@ -49,4 +54,17 @@ export const deleteBoardById = async (boardId: string, emit = true, notify = tru
     });
   }
   return deletedBoard;
+}
+
+export const deleteBoardByParams = async (params: any) => {
+  const boards = await board.find(params);
+  const deletedBoards = [];
+  for (const onBoard of boards) {
+    deletedBoards.push(await deleteBoardById(onBoard._id, false));
+  }
+  socket.emit('boards', {
+    action: 'deleted',
+    notify: false,
+    columns: deletedBoards
+  });
 }

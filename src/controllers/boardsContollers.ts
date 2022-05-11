@@ -31,14 +31,14 @@ export const getBoardById = async (req: Request, res: Response) => {
 
 export const createBoard = async (req: Request, res: Response) => {
 
-  const bodyError = checkBody(req.body, ['title'])
+  const bodyError = checkBody(req.body, ['title', 'owner', 'users'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
   }
 
-  const { title } = req.body;
+  const { title, owner, users } = req.body;
   try {
-    const newBoard = await boardService.createBoard({ title });
+    const newBoard = await boardService.createBoard({ title, owner, users });
     res.json(newBoard);
   }
   catch (err) { return console.log(err); }
@@ -47,14 +47,14 @@ export const createBoard = async (req: Request, res: Response) => {
 
 export const updateBoard = async (req: Request, res: Response) => {
 
-  const bodyError = checkBody(req.body, ['title'])
+  const bodyError = checkBody(req.body, ['title', 'owner', 'users'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
   }
-  const { title } = req.body;
+  const { title, owner, users } = req.body;
 
   try {
-    const updatedBoard = await boardService.updateBoard(req.params['boardId'], { title });
+    const updatedBoard = await boardService.updateBoard(req.params['boardId'], { title, owner, users });
     res.json(updatedBoard);
   }
   catch (err) { return console.log(err); }

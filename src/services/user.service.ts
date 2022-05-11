@@ -1,6 +1,7 @@
 import user from '../models/user';
 import { ObjectId } from 'mongodb';
 import * as taskService from './task.service';
+import * as boardService from './board.service';
 import { socket } from './server.service';
 
 export const createUser = async (params: any, emit = true, notify = false) => {
@@ -44,8 +45,9 @@ export const updateUser = async (id: string, params: any, emit = true, notify = 
 export const deleteUserById = async (userId: string, emit = true, notify = false) => {
   const id = new ObjectId(userId);
   const deletedUser = await user.findByIdAndDelete(id);
-  await taskService.deleteTaskByParams({ userId });
-  await taskService.clearUserInTasks(userId);
+  taskService.deleteTaskByParams({ userId });
+  boardService.deleteBoardByParams({ userId });
+  taskService.clearUserInTasks(userId);
   if (emit) {
     socket.emit('users', {
       action: 'edited',

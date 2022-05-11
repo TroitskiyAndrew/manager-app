@@ -10,6 +10,8 @@ import boardsRouter from '../routes/boardsRouter';
 import filesRouter from '../routes/filesRouter';
 import tasksSetRouter from '../routes/tasksSetRouter';
 import usersRouter from '../routes/usersRouter';
+import boardsSetRouter from '../routes/boardsSetRouter';
+import columnsSetRouter from '../routes/columnsSetRouter';
 
 
 export const app = express();
@@ -25,6 +27,8 @@ app.use(isAuth);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/boards', boardsRouter);
+app.use('/boardsSet', boardsSetRouter);
+app.use('/columnsSet', columnsSetRouter);
 app.use('/tasksSet', tasksSetRouter);
 app.use('/file', filesRouter);
 app.use('/files', express.static('files'));

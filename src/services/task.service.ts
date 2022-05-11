@@ -75,9 +75,6 @@ export const clearUserInTasks = async (userId: string) => {
     const userIndex = onTask.users.findIndex((item: string) => item == userId)
     if (userIndex > 0) {
       onTask.users.splice(userIndex, 1);
-      if (onTask.users.length === 0) {
-        onTask.users.push(onTask.userId)
-      }
       clearedTasks.push(await updateTask(onTask._id, { users: onTask.users, emit: false }));
     }
   }

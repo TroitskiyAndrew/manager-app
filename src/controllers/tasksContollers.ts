@@ -41,10 +41,6 @@ export const createTask = async (req: Request, res: Response) => {
   }
 
   const { title, order, description, userId, users } = req.body;
-
-  if (users.length === 0) {
-    users.push(userId);
-  }
   try {
     const newTask = await taskService.createTask({ title, order, description, userId, boardId, columnId, users });
     res.json(newTask);
@@ -60,10 +56,6 @@ export const updateTask = async (req: Request, res: Response) => {
     return res.status(400).send(createError(400, bodyError));
   }
   const { title, order, description, userId, boardId, columnId, users } = req.body;
-
-  if (users.length === 0) {
-    users.push(userId);
-  }
 
   try {
     const updatedTask = await taskService.updateTask(req.params.taskId, { title, order, description, userId, boardId, columnId, users });
