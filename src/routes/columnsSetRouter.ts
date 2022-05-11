@@ -9,5 +9,6 @@ const columnsSetRouter = express.Router();
 
 columnsSetRouter.post('/', jsonParser, columnsSetContollers.updateSetOfColumns);
 
+columnsSetRouter.post('/create', jsonParser, columnsSetContollers.createSetOfColumns);
 
 export default columnsSetRouter;

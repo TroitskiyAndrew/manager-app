@@ -39,3 +39,35 @@ export const updateSetOfColumns = async (req: Request, res: Response) => {
   return res.send(createError(200, 'Columns was updated!'));
 };
 
+export const createSetOfColumns = async (req: Request, res: Response) => {
+
+  const bodyError = checkBody(req.body, ['columns'])
+  if (bodyError) {
+    return res.status(400).send(createError(400, bodyError));
+  }
+  const { columns } = req.body;
+  if (columns.length == 0) {
+    return res.status(400).send(createError(400, 'You need at least 1 column'));
+  }
+  const createdColumns = [];
+  for (const oneColumn of columns) {
+    const bodyError = checkBody(oneColumn, ['title', 'order', 'boardId'])
+    if (bodyError) {
+      return res.status(400).send(createError(400, bodyError));
+    }
+    const { title, order, boardId } = oneColumn;
+
+    try {
+      createdColumns.push(await columnService.createColumn({ title, order, boardId }, false));
+    }
+    catch (err) { return console.log(err); }
+  }
+
+  socket.emit('columns', {
+    action: 'added',
+    notify: false,
+    tasks: createdColumns,
+  });
+
+};
+
