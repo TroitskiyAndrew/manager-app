@@ -44,33 +44,37 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
 
 export const findTasks = async (req: Request, res: Response) => {
   const search = req.query.search as string;
-
-  if (!search) {
-    return res.status(400).send(createError(400, 'Search request is required'));
-  }
-  try {
-    const allTasks = await taskService.findTasks({});
-    const allUsers = await userService.findUsers();
-    res.json(allTasks.filter(oneTask => {
-      const searchRequest = search.toUpperCase();
-      if (oneTask.title.toUpperCase().includes(searchRequest)) {
-        return true;
-      }
-      if (oneTask.description.toUpperCase().includes(searchRequest)) {
-        return true;
-      }
-      const users = [...allUsers.filter(user => user._id === new ObjectId(oneTask.userId) || oneTask.users.includes(user._id))];
-      for (const user of users) {
-
-        if (user.name.toUpperCase().includes(searchRequest)) {
+  const boards = req.query.search as string[];
+  const allTasks = await taskService.findTasks({});
+  if (search) {
+    try {
+      const allUsers = await userService.findUsers();
+      return res.json(allTasks.filter(oneTask => {
+        const searchRequest = search.toUpperCase();
+        if (oneTask.title.toUpperCase().includes(searchRequest)) {
           return true;
         }
-      }
-      return false;
+        if (oneTask.description.toUpperCase().includes(searchRequest)) {
+          return true;
+        }
+        const users = [...allUsers.filter(user => user._id === new ObjectId(oneTask.userId) || oneTask.users.includes(user._id))];
+        for (const user of users) {
 
-    }));
+          if (user.name.toUpperCase().includes(searchRequest)) {
+            return true;
+          }
+        }
+        return false;
+
+      }));
+    }
+    catch (err) { return console.log(err); }
+  } else if (boards) {
+    return res.json(allTasks.filter(oneTask => boards.includes(oneTask.boardId)));
+  } else {
+    return res.status(400).send(createError(400, 'Bad request'));
   }
-  catch (err) { return console.log(err); }
+
 };
 
 export const getTasksByBoard = async (req: Request, res: Response) => {
