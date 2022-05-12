@@ -7,6 +7,8 @@ const jsonParser = express.json();
 const pointsRouter = express.Router();
 
 
+pointsRouter.get('/', pointsContollers.findPoints);
+
 pointsRouter.get('/:boardId', pointsContollers.getPoints);
 
 pointsRouter.post('/', jsonParser, pointsContollers.createPoint);

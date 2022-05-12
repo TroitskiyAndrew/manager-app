@@ -6,6 +6,8 @@ const filesRouter = express.Router();
 
 filesRouter.get('/:taskId/:fileName', filesContollers.getFile);
 
+filesRouter.get('/', filesContollers.findFiles);
+
 filesRouter.get('/:boardId', filesContollers.getFilesByBoard);
 
 filesRouter.post('/', upload.single('file'), filesContollers.uploadFile);

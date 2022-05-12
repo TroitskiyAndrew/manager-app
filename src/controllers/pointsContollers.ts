@@ -15,6 +15,16 @@ export const getPoints = async (req: Request, res: Response) => {
   }
 };
 
+export const findPoints = async (req: Request, res: Response) => {
+  const boards = req.query.boards as string[];
+  if (boards) {
+    const allPoints = await pointService.findPoints({});
+    return res.json(allPoints.filter(onePoint => boards.includes(onePoint.boardId)));
+  } else {
+    return res.status(400).send(createError(400, 'Bad request'));
+  }
+};
+
 export const createPoint = async (req: Request, res: Response) => {
 
 

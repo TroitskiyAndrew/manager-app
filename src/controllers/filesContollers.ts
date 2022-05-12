@@ -26,6 +26,16 @@ export const getFilesByBoard = async (req: Request, res: Response) => {
   }
 };
 
+export const findFiles = async (req: Request, res: Response) => {
+  const boards = req.query.boards as string[];
+  if (boards) {
+    const allFiles = await fileService.findFiles({});
+    return res.json(allFiles.filter(oneFile => boards.includes(oneFile.boardId)));
+  } else {
+    return res.status(400).send(createError(400, 'Bad request'));
+  }
+};
+
 export const uploadFile = async (req: Request, res: Response) => {
 
   if (req.params.error === "file exist") {

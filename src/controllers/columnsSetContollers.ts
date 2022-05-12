@@ -39,6 +39,16 @@ export const updateSetOfColumns = async (req: Request, res: Response) => {
   return res.send(createError(200, 'Columns was updated!'));
 };
 
+export const findColumns = async (req: Request, res: Response) => {
+  const boards = req.query.boards as string[];
+  if (boards) {
+    const allColumns = await columnService.findColumns({});
+    return res.json(allColumns.filter(oneColumn => boards.includes(oneColumn.boardId)));
+  } else {
+    return res.status(400).send(createError(400, 'Bad request'));
+  }
+};
+
 export const createSetOfColumns = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['columns'])
