@@ -45,7 +45,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
 export const findTasks = async (req: Request, res: Response) => {
   const search = req.query.search as string;
   const boards = req.query.search as string[];
-  console.log(boards);
+  console.log(req.query);
   const allTasks = await taskService.findTasks({});
   if (search) {
     try {
