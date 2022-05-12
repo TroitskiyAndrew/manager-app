@@ -46,3 +46,7 @@ export const signUp = async (req: Request, res: Response) => {
   }
   catch (err) { return console.log(err); }
 };
+
+export const chek = async (req: Request, res: Response) => {
+  return res.status(200).send(createError(200, 'success'));
+};
