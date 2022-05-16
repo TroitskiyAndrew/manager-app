@@ -16,6 +16,9 @@ export const createPoint = async (params: any, emit = true, notify = true) => {
 }
 
 export const createSetOfPoints = async (taskId: string, boardId: string, newPoints: any[]) => {
+  if (newPoints.length === 0) {
+    return [];
+  }
   const createdPoints = [];
   for (const onePoint of newPoints) {
     createdPoints.push(await createPoint({ ...onePoint, taskId, boardId }, false));
