@@ -34,7 +34,7 @@ export const updateSetOfColumns = async (req: Request, res: Response) => {
   socket.emit('columns', {
     action: 'edited',
     notify: false,
-    tasks: updatedColumns,
+    columns: updatedColumns,
   });
   return res.send(createError(200, 'Columns was updated!'));
 };
@@ -76,7 +76,7 @@ export const createSetOfColumns = async (req: Request, res: Response) => {
   socket.emit('columns', {
     action: 'added',
     notify: false,
-    tasks: createdColumns,
+    columns: createdColumns,
   });
 
 };
