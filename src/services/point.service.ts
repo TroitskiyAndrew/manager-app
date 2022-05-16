@@ -26,7 +26,7 @@ export const createSetOfPoints = async (taskId: string, boardId: string, newPoin
   socket.emit('points', {
     action: 'added',
     notify: false,
-    points: [createdPoints]
+    points: createdPoints,
   });
   return createdPoints;
 }
