@@ -38,6 +38,7 @@ export const updateColumn = async (id: string, params: any, emit = true, notify 
       columns: [updatedColumn]
     });
   }
+  console.log(updatedColumn);
   return updatedColumn;
 }
 
