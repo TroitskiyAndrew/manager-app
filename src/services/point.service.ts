@@ -15,6 +15,19 @@ export const createPoint = async (params: any, emit = true, notify = true) => {
   return newPoint;
 }
 
+export const createSetOfPoints = async (taskId: string, boardId: string, newPoints: any[]) => {
+  const createdPoints = [];
+  for (const onePoint of newPoints) {
+    createdPoints.push(await createPoint({ ...onePoint, taskId, boardId }, false));
+  }
+  socket.emit('points', {
+    action: 'added',
+    notify: false,
+    points: [createdPoints]
+  });
+  return createdPoints;
+}
+
 
 export const findPoints = (params: any) => {
   return point.find(params);
