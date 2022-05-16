@@ -15,7 +15,7 @@ export const updateSetOfColumns = async (req: Request, res: Response) => {
   }
   const updatedColumns = [];
   for (const oneColumn of columns) {
-    const columnError = checkBody(oneColumn, ['_id', 'title', 'order', 'boardId', 'columnId'])
+    const columnError = checkBody(oneColumn, ['_id', 'title', 'order', 'boardId'])
     if (columnError) {
       return res.status(400).send(createError(400, columnError));
     }
