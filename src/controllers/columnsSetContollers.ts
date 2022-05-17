@@ -4,7 +4,7 @@ import { checkBody, createError } from '../services/error.service';
 import { socket } from '../services/server.service';
 
 export const updateSetOfColumns = async (req: Request, res: Response) => {
-
+  const guid = req.header('Guid') || 'undefined';
   const bodyError = checkBody(req.body, ['columns'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -26,7 +26,7 @@ export const updateSetOfColumns = async (req: Request, res: Response) => {
       return res.status(404).send(createError(404, 'Column was not founded!'));
     }
     try {
-      updatedColumns.push(await columnService.updateColumn(_id, { order }, false));
+      updatedColumns.push(await columnService.updateColumn(_id, { order }, guid, false));
     }
     catch (err) { return console.log(err); }
 
@@ -35,6 +35,8 @@ export const updateSetOfColumns = async (req: Request, res: Response) => {
     action: 'edited',
     notify: false,
     columns: updatedColumns,
+    guid,
+    exceptUsers: [],
   });
   return res.send(createError(200, 'Columns was updated!'));
 };
@@ -50,7 +52,7 @@ export const findColumns = async (req: Request, res: Response) => {
 };
 
 export const createSetOfColumns = async (req: Request, res: Response) => {
-
+  const guid = req.header('Guid') || 'undefined';
   const bodyError = checkBody(req.body, ['columns'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -68,7 +70,7 @@ export const createSetOfColumns = async (req: Request, res: Response) => {
     const { title, order, boardId } = oneColumn;
 
     try {
-      createdColumns.push(await columnService.createColumn({ title, order, boardId }, false));
+      createdColumns.push(await columnService.createColumn({ title, order, boardId }, guid, false));
     }
     catch (err) { return console.log(err); }
   }
@@ -77,6 +79,8 @@ export const createSetOfColumns = async (req: Request, res: Response) => {
     action: 'added',
     notify: false,
     columns: createdColumns,
+    guid,
+    exceptUsers: [],
   });
 
 };

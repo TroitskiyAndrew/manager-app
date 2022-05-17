@@ -32,7 +32,7 @@ export const getTaskById = async (req: Request, res: Response) => {
 };
 
 export const createTask = async (req: Request, res: Response) => {
-
+  const guid = req.header('Guid') || 'undefined';
   const boardId = req.baseUrl.split('/')[2];
   const columnId = req.baseUrl.split('/')[4];
 
@@ -43,8 +43,8 @@ export const createTask = async (req: Request, res: Response) => {
 
   const { title, order, description, userId, users, newPoints } = req.body;
   try {
-    const newTask = await taskService.createTask({ title, order, description, userId, boardId, columnId, users });
-    pointService.createSetOfPoints(newTask._id, boardId, newPoints)
+    const newTask = await taskService.createTask({ title, order, description, userId, boardId, columnId, users }, guid);
+    pointService.createSetOfPoints(newTask._id, boardId, newPoints, guid)
     res.json(newTask);
   }
   catch (err) { return console.log(err); }
@@ -52,7 +52,7 @@ export const createTask = async (req: Request, res: Response) => {
 };
 
 export const updateTask = async (req: Request, res: Response) => {
-
+  const guid = req.header('Guid') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'order', 'description', 'userId', 'boardId', 'columnId', 'users'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -60,15 +60,16 @@ export const updateTask = async (req: Request, res: Response) => {
   const { title, order, description, userId, boardId, columnId, users } = req.body;
 
   try {
-    const updatedTask = await taskService.updateTask(req.params.taskId, { title, order, description, userId, boardId, columnId, users });
+    const updatedTask = await taskService.updateTask(req.params.taskId, { title, order, description, userId, boardId, columnId, users }, guid);
     res.json(updatedTask);
   }
   catch (err) { return console.log(err); }
 };
 
 export const deleteTask = async (req: Request, res: Response) => {
+  const guid = req.header('Guid') || 'undefined';
   try {
-    const deletedTask = await taskService.deleteTaskById(req.params.taskId);
+    const deletedTask = await taskService.deleteTaskById(req.params.taskId, guid);
     res.json(deletedTask);
   }
   catch (err) { return console.log(err); }

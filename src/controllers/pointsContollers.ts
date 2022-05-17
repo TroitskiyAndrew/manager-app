@@ -26,7 +26,7 @@ export const findPoints = async (req: Request, res: Response) => {
 };
 
 export const createPoint = async (req: Request, res: Response) => {
-
+  const guid = req.header('Guid') || 'undefined';
 
   const bodyError = checkBody(req.body, ['title', 'taskId', 'boardId', 'done']);
   if (bodyError) {
@@ -35,7 +35,7 @@ export const createPoint = async (req: Request, res: Response) => {
 
   const { title, taskId, boardId, done } = req.body;
   try {
-    const newPoint = await pointService.createPoint({ title, taskId, boardId, done });
+    const newPoint = await pointService.createPoint({ title, taskId, boardId, done }, guid);
     res.json(newPoint);
   }
   catch (err) { return console.log(err); }
@@ -43,7 +43,7 @@ export const createPoint = async (req: Request, res: Response) => {
 };
 
 export const updatePoint = async (req: Request, res: Response) => {
-
+  const guid = req.header('Guid') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'taskId', 'boardId', 'done']);
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -51,14 +51,14 @@ export const updatePoint = async (req: Request, res: Response) => {
   const { title, done } = req.body;
 
   try {
-    const updatedPoint = await pointService.updatePoint(req.params.pointId, { title, done });
+    const updatedPoint = await pointService.updatePoint(req.params.pointId, { title, done }, guid);
     res.json(updatedPoint);
   }
   catch (err) { return console.log(err); }
 };
 
 export const updateSetOfPoints = async (req: Request, res: Response) => {
-
+  const guid = req.header('Guid') || 'undefined';
   const bodyError = checkBody(req.body, ['points']);
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -82,7 +82,7 @@ export const updateSetOfPoints = async (req: Request, res: Response) => {
       return res.status(404).send(createError(404, 'Point was not founded!'));
     }
     try {
-      updatedPoints.push(await pointService.updatePoint(_id, { done }, false));
+      updatedPoints.push(await pointService.updatePoint(_id, { done }, guid, false));
     }
     catch (err) { return console.log(err); }
 
@@ -91,12 +91,15 @@ export const updateSetOfPoints = async (req: Request, res: Response) => {
     action: 'edited',
     notify: false,
     tasks: updatedPoints,
+    guid,
+    exceptUsers: [],
   });
 };
 
 export const deletePoint = async (req: Request, res: Response) => {
+  const guid = req.header('Guid') || 'undefined';
   try {
-    const deletedPoint = await pointService.deletePointById(req.params.pointId);
+    const deletedPoint = await pointService.deletePointById(req.params.pointId, guid);
     res.json(deletedPoint);
   }
   catch (err) { return console.log(err); }

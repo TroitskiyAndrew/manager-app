@@ -4,14 +4,16 @@ import * as fileService from '../services/file.service';
 import * as pointService from '../services/point.service';
 import { socket } from './server.service';
 
-export const createTask = async (params: any, emit = true, notify = true) => {
+export const createTask = async (params: any, guid: string, emit = true, notify = true) => {
   const newTask = new task(params);
   await newTask.save();
   if (emit) {
     socket.emit('tasks', {
       action: 'added',
       notify: notify,
-      tasks: [newTask]
+      tasks: [newTask],
+      guid,
+      exceptUsers: [],
     });
   }
   return newTask;
@@ -29,60 +31,68 @@ export const findTasks = (params: any) => {
   return task.find(params);
 }
 
-export const updateTask = async (id: string, params: any, emit = true, notify = true) => {
+export const updateTask = async (id: string, params: any, guid: string, emit = true, notify = true) => {
   const taskId = new ObjectId(id);
   const updatedTask = await task.findByIdAndUpdate(taskId, params, { new: true })
   if (emit) {
     socket.emit('tasks', {
       action: 'edited',
       notify: notify,
-      tasks: [updatedTask]
+      tasks: [updatedTask],
+      guid,
+      exceptUsers: [],
     });
   }
   return updatedTask;
 }
 
-export const deleteTaskById = async (taskId: string, emit = true, notify = true) => {
+export const deleteTaskById = async (taskId: string, guid: string, emit = true, notify = true) => {
   const id = new ObjectId(taskId);
   const deletedTask = await task.findByIdAndDelete(id);
-  fileService.deletedFilesByTask(taskId);
-  pointService.deletePointsByParams({ taskId });
+  fileService.deletedFilesByTask(taskId, guid);
+  pointService.deletePointsByParams({ taskId }, guid);
   if (emit) {
     socket.emit('tasks', {
       action: 'deleted',
       notify: notify,
-      tasks: [deletedTask]
+      tasks: [deletedTask],
+      guid,
+      exceptUsers: [],
     });
   }
   return deletedTask;
 }
 
-export const deleteTaskByParams = async (params: any) => {
+export const deleteTaskByParams = async (params: any, guid: string) => {
   const tasks = await task.find(params);
   const deletedTasks = [];
   for (const onTask of tasks) {
-    deletedTasks.push(await deleteTaskById(onTask._id, false));
+    deletedTasks.push(await deleteTaskById(onTask._id, guid, false));
   }
   socket.emit('tasks', {
     action: 'deleted',
     notify: false,
     tasks: deletedTasks,
+    guid,
+    exceptUsers: [],
   });
 }
 
-export const clearUserInTasks = async (userId: string) => {
+export const clearUserInTasks = async (userId: string, guid: string) => {
   const tasks = await task.find({});
   const clearedTasks = [];
   for (const onTask of tasks) {
     const userIndex = onTask.users.findIndex((item: string) => item == userId)
     if (userIndex > 0) {
       onTask.users.splice(userIndex, 1);
-      clearedTasks.push(await updateTask(onTask._id, { users: onTask.users, emit: false }));
+      clearedTasks.push(await updateTask(onTask._id, { users: onTask.users }, guid, false));
     }
   }
   socket.emit('tasks', {
     action: 'edited',
     notify: false,
     tasks: clearedTasks,
+    guid,
+    exceptUsers: [],
   });
 }

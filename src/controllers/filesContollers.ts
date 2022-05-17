@@ -49,8 +49,9 @@ export const uploadFile = async (req: Request, res: Response) => {
 };
 
 export const deleteFile = async (req: Request, res: Response) => {
+  const guid = req.header('Guid') || 'undefined';
   try {
-    const deletedFile = await fileService.deleteFileById(req.params.fileId);
+    const deletedFile = await fileService.deleteFileById(req.params.fileId, guid);
     res.json(deletedFile);
   }
   catch (err) { return console.log(err); }

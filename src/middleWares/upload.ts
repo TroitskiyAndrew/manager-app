@@ -25,7 +25,8 @@ export const upload = multer({
         req.params.error = "file exist";
         next(null, false);
       }
-      const newFile = await fileService.createFile({ taskId, name, path, boardId });
+      const guid = req.header('Guid') || 'undefined';
+      const newFile = await fileService.createFile({ taskId, name, path, boardId }, guid);
       req.params.fileId = newFile._id;
       next(null, true)
     } else {

@@ -30,7 +30,7 @@ export const getBoardById = async (req: Request, res: Response) => {
 };
 
 export const createBoard = async (req: Request, res: Response) => {
-
+  const guid = req.header('Guid') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'owner', 'users'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -38,7 +38,7 @@ export const createBoard = async (req: Request, res: Response) => {
 
   const { title, owner, users } = req.body;
   try {
-    const newBoard = await boardService.createBoard({ title, owner, users });
+    const newBoard = await boardService.createBoard({ title, owner, users }, guid);
     res.json(newBoard);
   }
   catch (err) { return console.log(err); }
@@ -46,7 +46,7 @@ export const createBoard = async (req: Request, res: Response) => {
 };
 
 export const updateBoard = async (req: Request, res: Response) => {
-
+  const guid = req.header('Guid') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'owner', 'users'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -54,16 +54,16 @@ export const updateBoard = async (req: Request, res: Response) => {
   const { title, owner, users } = req.body;
 
   try {
-    const updatedBoard = await boardService.updateBoard(req.params['boardId'], { title, owner, users });
+    const updatedBoard = await boardService.updateBoard(req.params['boardId'], { title, owner, users }, guid);
     res.json(updatedBoard);
   }
   catch (err) { return console.log(err); }
 };
 
 export const deleteBoard = async (req: Request, res: Response) => {
-
+  const guid = req.header('Guid') || 'undefined';
   try {
-    const deletedBoard = await boardService.deleteBoardById(req.params['boardId']);
+    const deletedBoard = await boardService.deleteBoardById(req.params['boardId'], guid);
     res.json(deletedBoard);
   }
   catch (err) { return console.log(err); }

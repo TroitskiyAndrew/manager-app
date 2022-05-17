@@ -29,6 +29,7 @@ export const getColumnById = async (req: Request, res: Response) => {
 };
 
 export const createColumn = async (req: Request, res: Response) => {
+  const guid = req.header('Guid') || 'undefined';
   const boardId = req.baseUrl.split('/')[2];
   const bodyError = checkBody(req.body, ['title', 'order', 'boardId'])
   if (bodyError) {
@@ -38,7 +39,7 @@ export const createColumn = async (req: Request, res: Response) => {
   const { title, order } = req.body;
 
   try {
-    const newColumn = await columnService.createColumn({ title, order, boardId });
+    const newColumn = await columnService.createColumn({ title, order, boardId }, guid);
     res.json(newColumn);
   }
   catch (err) { return console.log(err); }
@@ -46,7 +47,7 @@ export const createColumn = async (req: Request, res: Response) => {
 };
 
 export const updateColumn = async (req: Request, res: Response) => {
-
+  const guid = req.header('Guid') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'order', 'boardId'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -54,15 +55,16 @@ export const updateColumn = async (req: Request, res: Response) => {
   const { title, order } = req.body;
 
   try {
-    const updatedColumn = await columnService.updateColumn(req.params['columnId'], { title, order })
+    const updatedColumn = await columnService.updateColumn(req.params['columnId'], { title, order }, guid)
     res.json(updatedColumn);
   }
   catch (err) { return console.log(err); }
 };
 
 export const deleteColumn = async (req: Request, res: Response) => {
+  const guid = req.header('Guid') || 'undefined';
   try {
-    const deletedColumn = await columnService.deleteColumnById(req.params['columnId']);
+    const deletedColumn = await columnService.deleteColumnById(req.params['columnId'], guid);
     res.json(deletedColumn);
   }
   catch (err) { return console.log(err); }
