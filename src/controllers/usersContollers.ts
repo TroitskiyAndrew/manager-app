@@ -4,9 +4,13 @@ import { checkBody, createError } from '../services/error.service';
 import { hashPassword } from '../services/hash.service';
 
 
-export const getUsers = async (_: Request, res: Response) => {
+export const getUsers = async (req: Request, res: Response) => {
+  const ids = req.query.ids as string[];
+  const foundedUsers = await userService.findUsers();
+  if (ids) {
+    return res.json(foundedUsers.filter(item => ids.includes(item._id)));
+  }
   try {
-    const foundedUsers = await userService.findUsers();
     res.json(foundedUsers);
   } catch (err) {
     console.log(err);

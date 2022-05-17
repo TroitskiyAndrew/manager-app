@@ -2,19 +2,19 @@ import task from '../models/task';
 import { ObjectId } from 'mongodb';
 import * as fileService from '../services/file.service';
 import * as pointService from '../services/point.service';
+import * as boardService from './board.service';
 import { socket } from './server.service';
 
-export const createTask = async (params: any, guid: string, initUser: string, emit = true, notify = true) => {
+export const createTask = async (params: any, guid: string, initUser: string, emit = true) => {
   const newTask = new task(params);
   await newTask.save();
   if (emit) {
     socket.emit('tasks', {
-      action: 'added',
-      notify: notify,
-      tasks: [newTask],
+      action: 'add',
+      users: boardService.getUserIdsByBoardsIds([newTask.boardId]),
+      ids: [newTask._id],
       guid,
-      initUser,
-      exceptUsers: [],
+      initUser
     });
   }
   return newTask;
@@ -32,35 +32,33 @@ export const findTasks = (params: any) => {
   return task.find(params);
 }
 
-export const updateTask = async (id: string, params: any, guid: string, initUser: string, emit = true, notify = true) => {
+export const updateTask = async (id: string, params: any, guid: string, initUser: string, emit = true) => {
   const taskId = new ObjectId(id);
   const updatedTask = await task.findByIdAndUpdate(taskId, params, { new: true })
   if (emit) {
     socket.emit('tasks', {
-      action: 'edited',
-      notify: notify,
-      tasks: [updatedTask],
+      action: 'update',
+      users: boardService.getUserIdsByBoardsIds([updatedTask.boardId]),
+      ids: [updatedTask._id],
       guid,
-      initUser,
-      exceptUsers: [],
+      initUser
     });
   }
   return updatedTask;
 }
 
-export const deleteTaskById = async (taskId: string, guid: string, initUser: string, emit = true, notify = true) => {
+export const deleteTaskById = async (taskId: string, guid: string, initUser: string, emit = true) => {
   const id = new ObjectId(taskId);
   const deletedTask = await task.findByIdAndDelete(id);
   fileService.deletedFilesByTask(taskId, guid, initUser);
   pointService.deletePointsByParams({ taskId }, guid, initUser);
   if (emit) {
     socket.emit('tasks', {
-      action: 'deleted',
-      notify: notify,
-      tasks: [deletedTask],
+      action: 'delete',
+      users: boardService.getUserIdsByBoardsIds([deletedTask.boardId]),
+      ids: [deletedTask._id],
       guid,
-      initUser,
-      exceptUsers: [],
+      initUser
     });
   }
   return deletedTask;
@@ -73,12 +71,11 @@ export const deleteTaskByParams = async (params: any, guid: string, initUser: st
     deletedTasks.push(await deleteTaskById(onTask._id, guid, initUser, false));
   }
   socket.emit('tasks', {
-    action: 'deleted',
-    notify: false,
-    tasks: deletedTasks,
+    action: 'delete',
+    users: boardService.getUserIdsByBoardsIds(deletedTasks.map(item => item.boardId)),
+    ids: deletedTasks.map(item => item._id),
     guid,
     initUser,
-    exceptUsers: [],
   });
 }
 
@@ -93,11 +90,10 @@ export const clearUserInTasks = async (userId: string, guid: string, initUser: s
     }
   }
   socket.emit('tasks', {
-    action: 'edited',
-    notify: false,
-    tasks: clearedTasks,
+    action: 'update',
+    users: boardService.getUserIdsByBoardsIds(clearedTasks.map(item => item.boardId)),
+    ids: clearedTasks.map(item => item._id),
     guid,
     initUser,
-    exceptUsers: [],
   });
 }

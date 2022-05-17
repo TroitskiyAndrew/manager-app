@@ -2,6 +2,7 @@ import { Response, Request } from 'express';
 import * as columnService from '../services/column.service';
 import { checkBody, createError } from '../services/error.service';
 import { socket } from '../services/server.service';
+import * as boardService from '../services/board.service';
 
 export const updateSetOfColumns = async (req: Request, res: Response) => {
   const guid = req.header('Guid') || 'undefined';
@@ -33,19 +34,22 @@ export const updateSetOfColumns = async (req: Request, res: Response) => {
 
   }
   socket.emit('columns', {
-    action: 'edited',
-    notify: false,
-    columns: updatedColumns,
+    action: 'update',
+    users: boardService.getUserIdsByBoardsIds(updatedColumns.map(item => item.boardId)),
+    ids: updatedColumns.map(item => item._id),
     guid,
     initUser,
-    exceptUsers: [],
   });
   return res.send(createError(200, 'Columns was updated!'));
 };
 
 export const findColumns = async (req: Request, res: Response) => {
-  const boards = req.query.boards as string[];
-  if (boards) {
+  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string || '627bacb62e3447fd8b1a79c5');
+  const ids = req.query.ids as string[];
+  if (ids) {
+    const allColumns = await columnService.findColumns({});
+    return res.json(allColumns.filter(item => ids.includes(item._id)));
+  } else if (boards) {
     const allColumns = await columnService.findColumns({});
     return res.json(allColumns.filter(oneColumn => boards.includes(oneColumn.boardId)));
   } else {
@@ -79,12 +83,11 @@ export const createSetOfColumns = async (req: Request, res: Response) => {
   }
 
   socket.emit('columns', {
-    action: 'added',
-    notify: false,
-    columns: createdColumns,
+    action: 'add',
+    users: boardService.getUserIdsByBoardsIds(createdColumns.map(item => item.boardId)),
+    ids: createdColumns.map(item => item._id),
     guid,
     initUser,
-    exceptUsers: [],
   });
 
 };

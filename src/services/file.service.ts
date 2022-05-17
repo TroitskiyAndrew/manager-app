@@ -2,18 +2,18 @@ import file from '../models/file';
 import fs from 'fs';
 import { ObjectId } from 'mongodb';
 import { socket } from './server.service';
+import * as boardService from './board.service';
 
-export const createFile = async (params: any, guid: string, initUser: string, emit = true, notify = true) => {
+export const createFile = async (params: any, guid: string, initUser: string, emit = true) => {
   const newFile = new file(params);
   await newFile.save();
   if (emit) {
     socket.emit('files', {
-      action: 'added',
-      notify: notify,
-      files: [newFile],
+      action: 'add',
+      users: boardService.getUserIdsByBoardsIds([newFile.boardId]),
+      ids: [newFile._id],
       guid,
-      initUser,
-      exceptUsers: [],
+      initUser
     });
   }
   return newFile;
@@ -31,7 +31,7 @@ export const findFiles = (params: any) => {
   return file.find(params);
 }
 
-export const deleteFileById = async (id: string, guid: string, initUser: string, emit = true, notify = true) => {
+export const deleteFileById = async (id: string, guid: string, initUser: string, emit = true) => {
   const fileId = new ObjectId(id);
   const deletedFile = await file.findByIdAndDelete(fileId);
   fs.unlink(deletedFile.path, (err) => {
@@ -39,12 +39,11 @@ export const deleteFileById = async (id: string, guid: string, initUser: string,
   });
   if (emit) {
     socket.emit('files', {
-      action: 'deleted',
-      notify: notify,
-      files: [deletedFile],
+      action: 'delete',
+      users: boardService.getUserIdsByBoardsIds([deletedFile.boardId]),
+      ids: [deletedFile._id],
       guid,
-      initUser,
-      exceptUsers: [],
+      initUser
     });
   }
   return deletedFile;
@@ -57,11 +56,10 @@ export const deletedFilesByTask = async (taskId: string, guid: string, initUser:
     deletedFiles.push(await deleteFileById(onFile._id, guid, initUser, false));
   }
   socket.emit('files', {
-    action: 'deleted',
-    notify: false,
-    files: deletedFiles,
+    action: 'delete',
+    users: boardService.getUserIdsByBoardsIds(deletedFiles.map(item => item.boardId)),
+    ids: deletedFiles.map(item => item._id),
     guid,
     initUser,
-    exceptUsers: [],
   });
 }

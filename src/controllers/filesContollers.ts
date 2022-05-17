@@ -2,6 +2,7 @@ import { Response, Request } from 'express';
 import { createError } from '../services/error.service';
 import fs from 'fs';
 import * as fileService from '../services/file.service';
+import * as boardService from '../services/board.service';
 
 
 
@@ -27,8 +28,12 @@ export const getFilesByBoard = async (req: Request, res: Response) => {
 };
 
 export const findFiles = async (req: Request, res: Response) => {
-  const boards = req.query.boards as string[];
-  if (boards) {
+  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string || '627bacb62e3447fd8b1a79c5');
+  const ids = req.query.ids as string[];
+  if (ids) {
+    const allFiles = await fileService.findFiles({});
+    return res.json(allFiles.filter(item => ids.includes(item._id)));
+  } else if (boards) {
     const allFiles = await fileService.findFiles({});
     return res.json(allFiles.filter(oneFile => boards.includes(oneFile.boardId)));
   } else {

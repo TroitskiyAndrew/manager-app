@@ -2,6 +2,7 @@ import { Response, Request } from 'express';
 import { ObjectId } from 'mongodb';
 import * as taskService from '../services/task.service';
 import * as userService from '../services/user.service';
+import * as boardService from '../services/board.service';
 import { checkBody, createError } from '../services/error.service';
 import { socket } from '../services/server.service';
 
@@ -36,12 +37,11 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
 
   }
   socket.emit('tasks', {
-    action: 'edited',
-    notify: false,
-    tasks: updatedTasks,
+    action: 'update',
+    users: boardService.getUserIdsByBoardsIds(updatedTasks.map(item => item.boardId)),
+    ids: updatedTasks.map(item => item._id),
     guid,
     initUser,
-    exceptUsers: [],
   });
   return res.send(createError(200, 'Tasks was updated!'));
 
@@ -49,9 +49,12 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
 
 export const findTasks = async (req: Request, res: Response) => {
   const search = req.query.search as string;
-  const boards = req.query.boards as string[];
+  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string || '627bacb62e3447fd8b1a79c5');
   const allTasks = await taskService.findTasks({});
-  if (search) {
+  const ids = req.query.ids as string[];
+  if (ids) {
+    return res.json(allTasks.filter(item => ids.includes(item._id)));
+  } else if (search) {
     try {
       const allUsers = await userService.findUsers();
       return res.json(allTasks.filter(oneTask => {

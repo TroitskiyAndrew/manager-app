@@ -3,17 +3,16 @@ import { ObjectId } from 'mongodb';
 import * as columnService from './column.service';
 import { socket } from './server.service';
 
-export const createBoard = async (params: any, guid: string, initUser: string, emit = true, notify = true) => {
+export const createBoard = async (params: any, guid: string, initUser: string, emit = true) => {
   const newBoard = new board(params);
   await newBoard.save();
   if (emit) {
     socket.emit('boards', {
-      action: 'added',
-      notify: notify,
-      boards: [newBoard],
+      action: 'add',
+      users: getUserIdsByBoardsIds([newBoard._id]),
+      ids: [newBoard._id],
       guid,
-      initUser,
-      exceptUsers: [],
+      initUser
     });
   }
   return newBoard;
@@ -32,34 +31,32 @@ export const findBoardsByUser = async (userId: string) => {
   return allBoards.filter(item => item.owner === userId || item.users.includes(userId))
 }
 
-export const updateBoard = async (id: string, params: any, guid: string, initUser: string, emit = true, notify = true) => {
+export const updateBoard = async (id: string, params: any, guid: string, initUser: string, emit = true) => {
   const boardId = new ObjectId(id);
   const updatedBoard = await board.findByIdAndUpdate(boardId, params, { new: true });
   if (emit) {
     socket.emit('boards', {
-      action: 'edited',
-      notify: notify,
-      boards: [updatedBoard],
+      action: 'update',
+      users: getUserIdsByBoardsIds([updatedBoard._id]),
+      ids: [updatedBoard._id],
       guid,
-      initUser,
-      exceptUsers: [],
+      initUser
     });
   }
   return updatedBoard;
 }
 
-export const deleteBoardById = async (boardId: string, guid: string, initUser: string, emit = true, notify = true) => {
+export const deleteBoardById = async (boardId: string, guid: string, initUser: string, emit = true) => {
   const id = new ObjectId(boardId);
   const deletedBoard = await board.findByIdAndDelete(id);
   await columnService.deleteColumnByParams({ boardId }, guid, initUser);
   if (emit) {
     socket.emit('boards', {
-      action: 'deleted',
-      notify: notify,
-      boards: [deletedBoard],
+      action: 'delete',
+      users: getUserIdsByBoardsIds([deletedBoard._id]),
+      ids: [deletedBoard._id],
       guid,
-      initUser,
-      exceptUsers: [],
+      initUser
     });
   }
   return deletedBoard;
@@ -72,12 +69,11 @@ export const deleteBoardByParams = async (params: any, guid: string, initUser: s
     deletedBoards.push(await deleteBoardById(onBoard._id, guid, initUser, false));
   }
   socket.emit('boards', {
-    action: 'deleted',
-    notify: false,
-    columns: deletedBoards,
+    action: 'delete',
+    users: getUserIdsByBoardsIds(deletedBoards.map(item => item._id)),
+    ids: deletedBoards.map(item => item._id),
     guid,
     initUser,
-    exceptUsers: [],
   });
 }
 
@@ -92,11 +88,26 @@ export const clearUserInBoards = async (userId: string, guid: string, initUser: 
     }
   }
   socket.emit('boards', {
-    action: 'edited',
-    notify: false,
-    tasks: clearedBoards,
+    action: 'update',
+    users: getUserIdsByBoardsIds(clearedBoards.map(item => item._id)),
+    ids: clearedBoards.map(item => item._id),
     guid,
     initUser,
-    exceptUsers: [],
   });
+}
+
+export const getUserIdsByBoardsIds = async (boards: string[]) => {
+  const allboards = await board.find({});
+  const interestedBoards = allboards.filter(item => boards.includes(item._id));
+  let result: string[] = [];
+  for (const oneBoard of interestedBoards) {
+    result = [...result, ...oneBoard.users, oneBoard.owner];
+  }
+  return Array.from(new Set(result));
+}
+
+export const getBordsIdsByUserId = async (user: string) => {
+  const allboards = await board.find({});
+  const interestedBoards = allboards.filter(item => item.users.includes(user) || item.owner === user);
+  return interestedBoards.map(board => board._id);
 }

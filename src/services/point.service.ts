@@ -1,18 +1,18 @@
 import point from '../models/point';
 import { ObjectId } from 'mongodb';
 import { socket } from './server.service';
+import * as boardService from './board.service';
 
-export const createPoint = async (params: any, guid: string, initUser: string, emit = true, notify = true) => {
+export const createPoint = async (params: any, guid: string, initUser: string, emit = true) => {
   const newPoint = new point(params);
   await newPoint.save();
   if (emit) {
     socket.emit('points', {
-      action: 'added',
-      notify: notify,
-      points: [newPoint],
+      action: 'add',
+      users: boardService.getUserIdsByBoardsIds([newPoint.boardId]),
+      ids: [newPoint._id],
       guid,
-      initUser,
-      exceptUsers: [],
+      initUser
     });
   }
   return newPoint;
@@ -27,12 +27,11 @@ export const createSetOfPoints = async (taskId: string, boardId: string, newPoin
     createdPoints.push(await createPoint({ ...onePoint, taskId, boardId }, guid, initUser, false));
   }
   socket.emit('points', {
-    action: 'added',
-    notify: false,
-    points: createdPoints,
+    action: 'add',
+    users: boardService.getUserIdsByBoardsIds(createdPoints.map(item => item.boardId)),
+    ids: createdPoints.map(item => item._id),
     guid,
     initUser,
-    exceptUsers: [],
   });
   return createdPoints;
 }
@@ -46,33 +45,31 @@ export const findPointById = (id: string) => {
   return point.findById(new ObjectId(id));
 }
 
-export const updatePoint = async (id: string, params: any, guid: string, initUser: string, emit = true, notify = false) => {
+export const updatePoint = async (id: string, params: any, guid: string, initUser: string, emit = true) => {
   const pointId = new ObjectId(id);
   const updatedPoint = await point.findByIdAndUpdate(pointId, params, { new: true })
   if (emit) {
     socket.emit('points', {
-      action: 'edited',
-      notify: notify,
-      points: [updatedPoint],
+      action: 'update',
+      users: boardService.getUserIdsByBoardsIds([updatedPoint.boardId]),
+      ids: [updatedPoint._id],
       guid,
-      initUser,
-      exceptUsers: [],
+      initUser
     });
   }
   return updatedPoint;
 }
 
-export const deletePointById = async (pointId: string, guid: string, initUser: string, emit = true, notify = false) => {
+export const deletePointById = async (pointId: string, guid: string, initUser: string, emit = true) => {
   const id = new ObjectId(pointId);
   const deletedPoint = await point.findByIdAndDelete(id);
   if (emit) {
     socket.emit('points', {
-      action: 'deleted',
-      notify: notify,
-      points: [deletedPoint],
+      action: 'delete',
+      users: boardService.getUserIdsByBoardsIds([deletedPoint.boardId]),
+      ids: [deletedPoint._id],
       guid,
-      initUser,
-      exceptUsers: [],
+      initUser
     });
   }
   return deletedPoint;
@@ -85,12 +82,11 @@ export const deletePointsByParams = async (params: any, guid: string, initUser: 
     deletedPoints.push(await deletePointById(onPoint._id, guid, initUser, false));
   }
   socket.emit('points', {
-    action: 'deleted',
-    notify: false,
-    points: deletedPoints,
+    action: 'delete',
+    users: boardService.getUserIdsByBoardsIds(deletedPoints.map(item => item.boardId)),
+    ids: deletedPoints.map(item => item._id),
     guid,
     initUser,
-    exceptUsers: [],
   });
 }
 

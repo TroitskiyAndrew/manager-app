@@ -11,3 +11,13 @@ export const getBoardsByUser = async (req: Request, res: Response) => {
   }
 };
 
+export const getBoardsByIds = async (req: Request, res: Response) => {
+  const ids = req.query.ids as string[];
+  try {
+    const allBoards = await boardService.findBoards();
+    res.json(allBoards.filter(item => ids.includes(item._id)));
+  } catch (err) {
+    console.log(err);
+  }
+};
+

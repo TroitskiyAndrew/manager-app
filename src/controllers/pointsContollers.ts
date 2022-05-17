@@ -2,6 +2,7 @@ import { Response, Request } from 'express';
 import * as pointService from '../services/point.service';
 import { checkBody, createError } from '../services/error.service';
 import { socket } from '../services/server.service';
+import * as boardService from '../services/board.service';
 
 
 
@@ -16,8 +17,13 @@ export const getPoints = async (req: Request, res: Response) => {
 };
 
 export const findPoints = async (req: Request, res: Response) => {
-  const boards = req.query.boards as string[];
-  if (boards) {
+  // ToDo-0 переделать проверку во всех подобных местах, чтобы отметать запросы без user
+  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string || '627bacb62e3447fd8b1a79c5');
+  const ids = req.query.ids as string[];
+  if (ids) {
+    const allPoints = await pointService.findPoints({});
+    return res.json(allPoints.filter(item => ids.includes(item._id)));
+  } else if (boards) {
     const allPoints = await pointService.findPoints({});
     return res.json(allPoints.filter(onePoint => boards.includes(onePoint.boardId)));
   } else {
@@ -91,12 +97,11 @@ export const updateSetOfPoints = async (req: Request, res: Response) => {
 
   }
   socket.emit('points', {
-    action: 'edited',
-    notify: false,
-    tasks: updatedPoints,
+    action: 'update',
+    users: boardService.getUserIdsByBoardsIds(updatedPoints.map(item => item.boardId)),
+    ids: updatedPoints.map(item => item._id),
     guid,
     initUser,
-    exceptUsers: [],
   });
 };
 
