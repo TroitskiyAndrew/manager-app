@@ -31,6 +31,7 @@ export const getBoardById = async (req: Request, res: Response) => {
 
 export const createBoard = async (req: Request, res: Response) => {
   const guid = req.header('Guid') || 'undefined';
+  const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'owner', 'users'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -38,7 +39,7 @@ export const createBoard = async (req: Request, res: Response) => {
 
   const { title, owner, users } = req.body;
   try {
-    const newBoard = await boardService.createBoard({ title, owner, users }, guid);
+    const newBoard = await boardService.createBoard({ title, owner, users }, guid, initUser);
     res.json(newBoard);
   }
   catch (err) { return console.log(err); }
@@ -47,6 +48,7 @@ export const createBoard = async (req: Request, res: Response) => {
 
 export const updateBoard = async (req: Request, res: Response) => {
   const guid = req.header('Guid') || 'undefined';
+  const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'owner', 'users'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -54,7 +56,7 @@ export const updateBoard = async (req: Request, res: Response) => {
   const { title, owner, users } = req.body;
 
   try {
-    const updatedBoard = await boardService.updateBoard(req.params['boardId'], { title, owner, users }, guid);
+    const updatedBoard = await boardService.updateBoard(req.params['boardId'], { title, owner, users }, guid, initUser);
     res.json(updatedBoard);
   }
   catch (err) { return console.log(err); }
@@ -62,8 +64,9 @@ export const updateBoard = async (req: Request, res: Response) => {
 
 export const deleteBoard = async (req: Request, res: Response) => {
   const guid = req.header('Guid') || 'undefined';
+  const initUser = req.header('initUser') || 'undefined';
   try {
-    const deletedBoard = await boardService.deleteBoardById(req.params['boardId'], guid);
+    const deletedBoard = await boardService.deleteBoardById(req.params['boardId'], guid, initUser);
     res.json(deletedBoard);
   }
   catch (err) { return console.log(err); }

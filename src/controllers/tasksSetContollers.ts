@@ -8,6 +8,7 @@ import { socket } from '../services/server.service';
 
 export const updateSetOfTask = async (req: Request, res: Response) => {
   const guid = req.header('Guid') || 'undefined';
+  const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['tasks'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -29,7 +30,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
       return res.status(404).send(createError(404, 'Task was not founded!'));
     }
     try {
-      updatedTasks.push(await taskService.updateTask(_id, { order, columnId }, guid, false));
+      updatedTasks.push(await taskService.updateTask(_id, { order, columnId }, guid, initUser, false));
     }
     catch (err) { return console.log(err); }
 
@@ -39,6 +40,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
     notify: false,
     tasks: updatedTasks,
     guid,
+    initUser,
     exceptUsers: [],
   });
   return res.send(createError(200, 'Tasks was updated!'));

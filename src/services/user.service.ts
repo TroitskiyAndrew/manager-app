@@ -42,12 +42,12 @@ export const updateUser = async (id: string, params: any, emit = true, notify = 
   return updatedUser;
 }
 
-export const deleteUserById = async (userId: string, guid: string, emit = true, notify = false) => {
+export const deleteUserById = async (userId: string, guid: string, initUser: string, emit = true, notify = false) => {
   const id = new ObjectId(userId);
   const deletedUser = await user.findByIdAndDelete(id);
-  taskService.deleteTaskByParams({ userId }, guid);
-  boardService.deleteBoardByParams({ owner: userId }, guid);
-  taskService.clearUserInTasks(userId, guid);
+  taskService.deleteTaskByParams({ userId }, guid, initUser);
+  boardService.deleteBoardByParams({ owner: userId }, guid, initUser);
+  taskService.clearUserInTasks(userId, guid, initUser);
   if (emit) {
     socket.emit('users', {
       action: 'edited',

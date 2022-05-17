@@ -33,6 +33,7 @@ export const getTaskById = async (req: Request, res: Response) => {
 
 export const createTask = async (req: Request, res: Response) => {
   const guid = req.header('Guid') || 'undefined';
+  const initUser = req.header('initUser') || 'undefined';
   const boardId = req.baseUrl.split('/')[2];
   const columnId = req.baseUrl.split('/')[4];
 
@@ -43,8 +44,8 @@ export const createTask = async (req: Request, res: Response) => {
 
   const { title, order, description, userId, users, newPoints } = req.body;
   try {
-    const newTask = await taskService.createTask({ title, order, description, userId, boardId, columnId, users }, guid);
-    pointService.createSetOfPoints(newTask._id, boardId, newPoints, guid)
+    const newTask = await taskService.createTask({ title, order, description, userId, boardId, columnId, users }, guid, initUser);
+    pointService.createSetOfPoints(newTask._id, boardId, newPoints, guid, initUser)
     res.json(newTask);
   }
   catch (err) { return console.log(err); }
@@ -53,6 +54,7 @@ export const createTask = async (req: Request, res: Response) => {
 
 export const updateTask = async (req: Request, res: Response) => {
   const guid = req.header('Guid') || 'undefined';
+  const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'order', 'description', 'userId', 'boardId', 'columnId', 'users'])
   if (bodyError) {
     return res.status(400).send(createError(400, bodyError));
@@ -60,7 +62,7 @@ export const updateTask = async (req: Request, res: Response) => {
   const { title, order, description, userId, boardId, columnId, users } = req.body;
 
   try {
-    const updatedTask = await taskService.updateTask(req.params.taskId, { title, order, description, userId, boardId, columnId, users }, guid);
+    const updatedTask = await taskService.updateTask(req.params.taskId, { title, order, description, userId, boardId, columnId, users }, guid, initUser);
     res.json(updatedTask);
   }
   catch (err) { return console.log(err); }
@@ -68,8 +70,9 @@ export const updateTask = async (req: Request, res: Response) => {
 
 export const deleteTask = async (req: Request, res: Response) => {
   const guid = req.header('Guid') || 'undefined';
+  const initUser = req.header('initUser') || 'undefined';
   try {
-    const deletedTask = await taskService.deleteTaskById(req.params.taskId, guid);
+    const deletedTask = await taskService.deleteTaskById(req.params.taskId, guid, initUser);
     res.json(deletedTask);
   }
   catch (err) { return console.log(err); }
