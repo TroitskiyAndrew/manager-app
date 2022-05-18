@@ -103,7 +103,7 @@ export const clearUserInBoards = async (userId: string, guid: string, initUser: 
 
 export const getUserIdsByBoardsIds = async (boards: string[]) => {
   const allboards = await board.find({});
-  const interestedBoards = allboards.filter(item => boards.includes(item._id));
+  const interestedBoards = allboards.filter(item => boards.includes(item._id.toString()));
   let result: string[] = [];
   for (const oneBoard of interestedBoards) {
     result = [...result, ...oneBoard.users, oneBoard.owner];
@@ -114,5 +114,5 @@ export const getUserIdsByBoardsIds = async (boards: string[]) => {
 export const getBordsIdsByUserId = async (user: string) => {
   const allboards = await board.find({});
   const interestedBoards = allboards.filter(item => item._doc.users.includes(user) || item._doc.owner === user);
-  return interestedBoards.map(board => board._id);
+  return interestedBoards.map(board => board._id.toString());
 }
