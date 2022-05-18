@@ -50,7 +50,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
 
 export const findTasks = async (req: Request, res: Response) => {
   const search = req.query.search as string;
-  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string || '627bacb62e3447fd8b1a79c5');
+  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string || '6277fb29be355ebdf7b3fc4d');
   const allTasks = await taskService.findTasks({});
   const ids = req.query.ids as string[];
   if (ids) {

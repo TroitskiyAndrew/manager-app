@@ -18,7 +18,7 @@ export const getPoints = async (req: Request, res: Response) => {
 
 export const findPoints = async (req: Request, res: Response) => {
   // ToDo-0 переделать проверку во всех подобных местах, чтобы отметать запросы без user
-  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string || '627bacb62e3447fd8b1a79c5');
+  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string || '6277fb29be355ebdf7b3fc4d');
   const ids = req.query.ids as string[];
   if (ids) {
     const allPoints = await pointService.findPoints({});
