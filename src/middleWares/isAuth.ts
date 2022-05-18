@@ -13,7 +13,7 @@ const isAuth: RequestHandler = (req: Request, res: Response, next: NextFunction)
       return next();
     }
   }
-  return res.status(403).send(createError(403, 'Wrong Authorization'));
+  return res.status(403).send(createError(403, '${user.common.errors.authError}'));
 }
 
 export default isAuth;

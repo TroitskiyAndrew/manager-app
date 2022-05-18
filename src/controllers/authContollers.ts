@@ -8,7 +8,7 @@ export const signIn = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['login', 'password'])
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
 
   const { login, password } = req.body;
@@ -21,7 +21,7 @@ export const signIn = async (req: Request, res: Response) => {
     }
   }
 
-  return res.status(401).send(createError(401, 'Wrong login/pass combination'));
+  return res.status(401).send(createError(401, '${user.common.errors.authError}'));
 
 };
 
@@ -30,13 +30,13 @@ export const signUp = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['name', 'login', 'password'])
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
   const { login, name, password } = req.body;
 
   const foundedUser = await userService.findOneUser({ login });
   if (foundedUser) {
-    return res.status(409).send(createError(409, 'login already exist'));
+    return res.status(409).send(createError(409, '${user.common.errors.loginExistError}'));
   }
   const hashedPassword = await hashPassword(password);
 

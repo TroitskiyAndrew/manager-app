@@ -34,7 +34,7 @@ export const createBoard = async (req: Request, res: Response) => {
   const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'owner', 'users'])
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
 
   const { title, owner, users } = req.body;
@@ -51,7 +51,7 @@ export const updateBoard = async (req: Request, res: Response) => {
   const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'owner', 'users'])
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
   const { title, owner, users } = req.body;
 

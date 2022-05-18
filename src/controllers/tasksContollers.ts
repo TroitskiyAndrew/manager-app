@@ -39,7 +39,7 @@ export const createTask = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['title', 'order', 'description', 'userId', 'boardId', 'columnId', 'users', 'newPoints'])
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
 
   const { title, order, description, userId, users, newPoints } = req.body;
@@ -57,7 +57,7 @@ export const updateTask = async (req: Request, res: Response) => {
   const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'order', 'description', 'userId', 'boardId', 'columnId', 'users'])
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
   const { title, order, description, userId, boardId, columnId, users } = req.body;
 

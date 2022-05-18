@@ -34,7 +34,7 @@ export const createColumn = async (req: Request, res: Response) => {
   const boardId = req.baseUrl.split('/')[2];
   const bodyError = checkBody(req.body, ['title', 'order', 'boardId'])
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
 
   const { title, order } = req.body;
@@ -52,7 +52,7 @@ export const updateColumn = async (req: Request, res: Response) => {
   const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'order', 'boardId'])
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
   const { title, order } = req.body;
 

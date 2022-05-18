@@ -17,8 +17,7 @@ export const getPoints = async (req: Request, res: Response) => {
 };
 
 export const findPoints = async (req: Request, res: Response) => {
-  // ToDo-0 переделать проверку во всех подобных местах, чтобы отметать запросы без user
-  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string || '6277fb29be355ebdf7b3fc4d');
+  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string);
   const ids = req.query.ids as string[];
   if (ids) {
     const allPoints = await pointService.findPoints({});
@@ -37,7 +36,7 @@ export const createPoint = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['title', 'taskId', 'boardId', 'done']);
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
 
   const { title, taskId, boardId, done } = req.body;
@@ -54,7 +53,7 @@ export const updatePoint = async (req: Request, res: Response) => {
   const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['title', 'taskId', 'boardId', 'done']);
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
   const { title, done } = req.body;
 
@@ -70,7 +69,7 @@ export const updateSetOfPoints = async (req: Request, res: Response) => {
   const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['points']);
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
   const { points } = req.body;
 

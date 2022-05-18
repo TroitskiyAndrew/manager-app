@@ -37,13 +37,13 @@ export const updateUser = async (req: Request, res: Response) => {
 
   const bodyError = checkBody(req.body, ['name', 'login', 'password'])
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
   const { login, name, password } = req.body;
 
   const foundedUser = await userService.findOneUser({ login });
   if (foundedUser && foundedUser.id !== id) {
-    return res.status(409).send(createError(409, 'login already exist'));
+    return res.status(409).send(createError(409, '${user.common.errors.loginExistError}'));
   }
 
   try {

@@ -9,7 +9,7 @@ export const updateSetOfColumns = async (req: Request, res: Response) => {
   const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['columns'])
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
   const { columns } = req.body;
   if (columns.length == 0) {
@@ -45,7 +45,7 @@ export const updateSetOfColumns = async (req: Request, res: Response) => {
 };
 
 export const findColumns = async (req: Request, res: Response) => {
-  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string || '6277fb29be355ebdf7b3fc4d');
+  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string);
   const ids = req.query.ids as string[];
   if (ids) {
     const allColumns = await columnService.findColumns({});
@@ -63,7 +63,7 @@ export const createSetOfColumns = async (req: Request, res: Response) => {
   const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['columns'])
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
   const { columns } = req.body;
   if (columns.length == 0) {
@@ -73,7 +73,7 @@ export const createSetOfColumns = async (req: Request, res: Response) => {
   for (const oneColumn of columns) {
     const bodyError = checkBody(oneColumn, ['title', 'order', 'boardId'])
     if (bodyError) {
-      return res.status(400).send(createError(400, bodyError));
+      return res.status(400).send(createError(400, "bad request: " + bodyError));
     }
     const { title, order, boardId } = oneColumn;
 

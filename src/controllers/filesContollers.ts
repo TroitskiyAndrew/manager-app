@@ -28,7 +28,7 @@ export const getFilesByBoard = async (req: Request, res: Response) => {
 };
 
 export const findFiles = async (req: Request, res: Response) => {
-  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string || '6277fb29be355ebdf7b3fc4d');
+  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string);
   const ids = req.query.ids as string[];
   if (ids) {
     const allFiles = await fileService.findFiles({});

@@ -12,7 +12,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
   const initUser = req.header('initUser') || 'undefined';
   const bodyError = checkBody(req.body, ['tasks'])
   if (bodyError) {
-    return res.status(400).send(createError(400, bodyError));
+    return res.status(400).send(createError(400, "bad request: " + bodyError));
   }
   const { tasks } = req.body;
   if (tasks.length == 0) {
@@ -22,7 +22,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
   for (const oneTask of tasks) {
     const taskError = checkBody(oneTask, ['_id', 'title', 'order', 'description', 'userId', 'boardId', 'columnId', 'users'])
     if (taskError) {
-      return res.status(400).send(createError(400, taskError));
+      return res.status(400).send(createError(400, "bad request: " + taskError));
     }
     const { _id, order, columnId } = oneTask;
 
@@ -50,7 +50,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
 
 export const findTasks = async (req: Request, res: Response) => {
   const search = req.query.search as string;
-  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string || '6277fb29be355ebdf7b3fc4d');
+  const boards = await boardService.getBordsIdsByUserId(req.query.userId as string);
   const allTasks = await taskService.findTasks({});
   const ids = req.query.ids as string[];
   if (ids) {
