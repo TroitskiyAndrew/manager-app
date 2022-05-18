@@ -44,7 +44,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
     notify: false,
     initUser,
   });
-  return res.send(createError(200, 'Tasks was updated!'));
+  return res.json(updatedTasks);
 
 };
 

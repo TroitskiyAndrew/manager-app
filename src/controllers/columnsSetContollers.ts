@@ -41,7 +41,7 @@ export const updateSetOfColumns = async (req: Request, res: Response) => {
     notify: false,
     initUser,
   });
-  return res.send(createError(200, 'Columns was updated!'));
+  return res.json(updatedColumns);
 };
 
 export const findColumns = async (req: Request, res: Response) => {
@@ -91,6 +91,8 @@ export const createSetOfColumns = async (req: Request, res: Response) => {
     notify: true,
     initUser,
   });
+
+  return res.json(createdColumns);
 
 };
 
