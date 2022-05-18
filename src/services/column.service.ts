@@ -4,7 +4,7 @@ import * as taskService from './task.service';
 import * as boardService from './board.service';
 import { socket } from './server.service';
 
-export const createColumn = async (params: any, guid: string, initUser: string, emit = true) => {
+export const createColumn = async (params: any, guid: string, initUser: string, emit = true, notify = true) => {
   const newColumn = new column(params);
   await newColumn.save();
   if (emit) {
@@ -13,6 +13,7 @@ export const createColumn = async (params: any, guid: string, initUser: string, 
       users: boardService.getUserIdsByBoardsIds([newColumn.boardId]),
       ids: [newColumn._id],
       guid,
+      notify,
       initUser
     });
   }
@@ -31,7 +32,7 @@ export const findColumns = (params: any) => {
   return column.find(params);
 }
 
-export const updateColumn = async (id: string, params: any, guid: string, initUser: string, emit = true) => {
+export const updateColumn = async (id: string, params: any, guid: string, initUser: string, emit = true, notify = true) => {
   const columnId = new ObjectId(id);
   const updatedColumn = await column.findByIdAndUpdate(columnId, params, { new: true })
   if (emit) {
@@ -40,13 +41,14 @@ export const updateColumn = async (id: string, params: any, guid: string, initUs
       users: boardService.getUserIdsByBoardsIds([updatedColumn.boardId]),
       ids: [updatedColumn._id],
       guid,
+      notify,
       initUser
     });
   }
   return updatedColumn;
 }
 
-export const deleteColumnById = async (columnId: string, guid: string, initUser: string, emit = true) => {
+export const deleteColumnById = async (columnId: string, guid: string, initUser: string, emit = true, notify = true) => {
   const id = new ObjectId(columnId);
   const deletedColumn = await column.findByIdAndDelete(id);
   await taskService.deleteTaskByParams({ columnId }, guid, initUser);
@@ -56,6 +58,7 @@ export const deleteColumnById = async (columnId: string, guid: string, initUser:
       users: boardService.getUserIdsByBoardsIds([deletedColumn.boardId]),
       ids: [deletedColumn._id],
       guid,
+      notify,
       initUser
     });
   }
@@ -73,6 +76,7 @@ export const deleteColumnByParams = async (params: any, guid: string, initUser: 
     users: boardService.getUserIdsByBoardsIds(deletedColumns.map(item => item.boardId)),
     ids: deletedColumns.map(item => item._id),
     guid,
+    notify: false,
     initUser,
   });
 }

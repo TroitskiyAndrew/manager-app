@@ -38,6 +38,7 @@ export const updateSetOfColumns = async (req: Request, res: Response) => {
     users: boardService.getUserIdsByBoardsIds(updatedColumns.map(item => item.boardId)),
     ids: updatedColumns.map(item => item._id),
     guid,
+    notify: false,
     initUser,
   });
   return res.send(createError(200, 'Columns was updated!'));
@@ -87,6 +88,7 @@ export const createSetOfColumns = async (req: Request, res: Response) => {
     users: boardService.getUserIdsByBoardsIds(createdColumns.map(item => item.boardId)),
     ids: createdColumns.map(item => item._id),
     guid,
+    notify: true,
     initUser,
   });
 

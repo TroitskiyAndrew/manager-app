@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { socket } from './server.service';
 import * as boardService from './board.service';
 
-export const createPoint = async (params: any, guid: string, initUser: string, emit = true) => {
+export const createPoint = async (params: any, guid: string, initUser: string, emit = true, notify = true) => {
   const newPoint = new point(params);
   await newPoint.save();
   if (emit) {
@@ -12,6 +12,7 @@ export const createPoint = async (params: any, guid: string, initUser: string, e
       users: boardService.getUserIdsByBoardsIds([newPoint.boardId]),
       ids: [newPoint._id],
       guid,
+      notify,
       initUser
     });
   }
@@ -31,6 +32,7 @@ export const createSetOfPoints = async (taskId: string, boardId: string, newPoin
     users: boardService.getUserIdsByBoardsIds(createdPoints.map(item => item.boardId)),
     ids: createdPoints.map(item => item._id),
     guid,
+    notify: false,
     initUser,
   });
   return createdPoints;
@@ -45,7 +47,7 @@ export const findPointById = (id: string) => {
   return point.findById(new ObjectId(id));
 }
 
-export const updatePoint = async (id: string, params: any, guid: string, initUser: string, emit = true) => {
+export const updatePoint = async (id: string, params: any, guid: string, initUser: string, emit = true, notify = true) => {
   const pointId = new ObjectId(id);
   const updatedPoint = await point.findByIdAndUpdate(pointId, params, { new: true })
   if (emit) {
@@ -54,13 +56,14 @@ export const updatePoint = async (id: string, params: any, guid: string, initUse
       users: boardService.getUserIdsByBoardsIds([updatedPoint.boardId]),
       ids: [updatedPoint._id],
       guid,
+      notify,
       initUser
     });
   }
   return updatedPoint;
 }
 
-export const deletePointById = async (pointId: string, guid: string, initUser: string, emit = true) => {
+export const deletePointById = async (pointId: string, guid: string, initUser: string, emit = true, notify = true) => {
   const id = new ObjectId(pointId);
   const deletedPoint = await point.findByIdAndDelete(id);
   if (emit) {
@@ -69,6 +72,7 @@ export const deletePointById = async (pointId: string, guid: string, initUser: s
       users: boardService.getUserIdsByBoardsIds([deletedPoint.boardId]),
       ids: [deletedPoint._id],
       guid,
+      notify,
       initUser
     });
   }
@@ -86,6 +90,7 @@ export const deletePointsByParams = async (params: any, guid: string, initUser: 
     users: boardService.getUserIdsByBoardsIds(deletedPoints.map(item => item.boardId)),
     ids: deletedPoints.map(item => item._id),
     guid,
+    notify: false,
     initUser,
   });
 }

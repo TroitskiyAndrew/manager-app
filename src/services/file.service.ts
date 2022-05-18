@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 import { socket } from './server.service';
 import * as boardService from './board.service';
 
-export const createFile = async (params: any, guid: string, initUser: string, emit = true) => {
+export const createFile = async (params: any, guid: string, initUser: string, emit = true, notify = true) => {
   const newFile = new file(params);
   await newFile.save();
   if (emit) {
@@ -13,6 +13,7 @@ export const createFile = async (params: any, guid: string, initUser: string, em
       users: boardService.getUserIdsByBoardsIds([newFile.boardId]),
       ids: [newFile._id],
       guid,
+      notify,
       initUser
     });
   }
@@ -31,7 +32,7 @@ export const findFiles = (params: any) => {
   return file.find(params);
 }
 
-export const deleteFileById = async (id: string, guid: string, initUser: string, emit = true) => {
+export const deleteFileById = async (id: string, guid: string, initUser: string, emit = true, notify = true) => {
   const fileId = new ObjectId(id);
   const deletedFile = await file.findByIdAndDelete(fileId);
   fs.unlink(deletedFile.path, (err) => {
@@ -43,6 +44,7 @@ export const deleteFileById = async (id: string, guid: string, initUser: string,
       users: boardService.getUserIdsByBoardsIds([deletedFile.boardId]),
       ids: [deletedFile._id],
       guid,
+      notify,
       initUser
     });
   }
@@ -60,6 +62,7 @@ export const deletedFilesByTask = async (taskId: string, guid: string, initUser:
     users: boardService.getUserIdsByBoardsIds(deletedFiles.map(item => item.boardId)),
     ids: deletedFiles.map(item => item._id),
     guid,
+    notify: false,
     initUser,
   });
 }

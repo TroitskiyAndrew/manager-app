@@ -5,7 +5,7 @@ import * as pointService from '../services/point.service';
 import * as boardService from './board.service';
 import { socket } from './server.service';
 
-export const createTask = async (params: any, guid: string, initUser: string, emit = true) => {
+export const createTask = async (params: any, guid: string, initUser: string, emit = true, notify = true) => {
   const newTask = new task(params);
   await newTask.save();
   if (emit) {
@@ -14,6 +14,7 @@ export const createTask = async (params: any, guid: string, initUser: string, em
       users: boardService.getUserIdsByBoardsIds([newTask.boardId]),
       ids: [newTask._id],
       guid,
+      notify,
       initUser
     });
   }
@@ -32,7 +33,7 @@ export const findTasks = (params: any) => {
   return task.find(params);
 }
 
-export const updateTask = async (id: string, params: any, guid: string, initUser: string, emit = true) => {
+export const updateTask = async (id: string, params: any, guid: string, initUser: string, emit = true, notify = true) => {
   const taskId = new ObjectId(id);
   const updatedTask = await task.findByIdAndUpdate(taskId, params, { new: true })
   if (emit) {
@@ -41,13 +42,14 @@ export const updateTask = async (id: string, params: any, guid: string, initUser
       users: boardService.getUserIdsByBoardsIds([updatedTask.boardId]),
       ids: [updatedTask._id],
       guid,
+      notify,
       initUser
     });
   }
   return updatedTask;
 }
 
-export const deleteTaskById = async (taskId: string, guid: string, initUser: string, emit = true) => {
+export const deleteTaskById = async (taskId: string, guid: string, initUser: string, emit = true, notify = true) => {
   const id = new ObjectId(taskId);
   const deletedTask = await task.findByIdAndDelete(id);
   fileService.deletedFilesByTask(taskId, guid, initUser);
@@ -58,6 +60,7 @@ export const deleteTaskById = async (taskId: string, guid: string, initUser: str
       users: boardService.getUserIdsByBoardsIds([deletedTask.boardId]),
       ids: [deletedTask._id],
       guid,
+      notify,
       initUser
     });
   }
@@ -75,6 +78,7 @@ export const deleteTaskByParams = async (params: any, guid: string, initUser: st
     users: boardService.getUserIdsByBoardsIds(deletedTasks.map(item => item.boardId)),
     ids: deletedTasks.map(item => item._id),
     guid,
+    notify: false,
     initUser,
   });
 }
@@ -94,6 +98,7 @@ export const clearUserInTasks = async (userId: string, guid: string, initUser: s
     users: boardService.getUserIdsByBoardsIds(clearedTasks.map(item => item.boardId)),
     ids: clearedTasks.map(item => item._id),
     guid,
+    notify: false,
     initUser,
   });
 }

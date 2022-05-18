@@ -101,6 +101,7 @@ export const updateSetOfPoints = async (req: Request, res: Response) => {
     users: boardService.getUserIdsByBoardsIds(updatedPoints.map(item => item.boardId)),
     ids: updatedPoints.map(item => item._id),
     guid,
+    notify: false,
     initUser,
   });
 };

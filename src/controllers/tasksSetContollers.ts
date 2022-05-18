@@ -41,6 +41,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
     users: boardService.getUserIdsByBoardsIds(updatedTasks.map(item => item.boardId)),
     ids: updatedTasks.map(item => item._id),
     guid,
+    notify: false,
     initUser,
   });
   return res.send(createError(200, 'Tasks was updated!'));
