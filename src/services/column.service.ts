@@ -10,7 +10,7 @@ export const createColumn = async (params: any, guid: string, initUser: string, 
   if (emit) {
     socket.emit('columns', {
       action: 'add',
-      users: boardService.getUserIdsByBoardsIds([newColumn.boardId]),
+      users: await boardService.getUserIdsByBoardsIds([newColumn.boardId]),
       ids: [newColumn._id],
       guid,
       notify,
@@ -38,7 +38,7 @@ export const updateColumn = async (id: string, params: any, guid: string, initUs
   if (emit) {
     socket.emit('columns', {
       action: 'update',
-      users: boardService.getUserIdsByBoardsIds([updatedColumn.boardId]),
+      users: await boardService.getUserIdsByBoardsIds([updatedColumn.boardId]),
       ids: [updatedColumn._id],
       guid,
       notify,
@@ -55,7 +55,7 @@ export const deleteColumnById = async (columnId: string, guid: string, initUser:
   if (emit) {
     socket.emit('columns', {
       action: 'delete',
-      users: boardService.getUserIdsByBoardsIds([deletedColumn.boardId]),
+      users: await boardService.getUserIdsByBoardsIds([deletedColumn.boardId]),
       ids: [deletedColumn._id],
       guid,
       notify,
@@ -73,7 +73,7 @@ export const deleteColumnByParams = async (params: any, guid: string, initUser: 
   }
   socket.emit('columns', {
     action: 'delete',
-    users: boardService.getUserIdsByBoardsIds(deletedColumns.map(item => item.boardId)),
+    users: await boardService.getUserIdsByBoardsIds(deletedColumns.map(item => item.boardId)),
     ids: deletedColumns.map(item => item._id),
     guid,
     notify: false,

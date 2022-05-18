@@ -38,7 +38,7 @@ export const updateSetOfTask = async (req: Request, res: Response) => {
   }
   socket.emit('tasks', {
     action: 'update',
-    users: boardService.getUserIdsByBoardsIds(updatedTasks.map(item => item.boardId)),
+    users: await boardService.getUserIdsByBoardsIds(updatedTasks.map(item => item.boardId)),
     ids: updatedTasks.map(item => item._id),
     guid,
     notify: false,

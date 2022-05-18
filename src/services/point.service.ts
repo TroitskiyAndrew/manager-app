@@ -9,7 +9,7 @@ export const createPoint = async (params: any, guid: string, initUser: string, e
   if (emit) {
     socket.emit('points', {
       action: 'add',
-      users: boardService.getUserIdsByBoardsIds([newPoint.boardId]),
+      users: await boardService.getUserIdsByBoardsIds([newPoint.boardId]),
       ids: [newPoint._id],
       guid,
       notify,
@@ -29,7 +29,7 @@ export const createSetOfPoints = async (taskId: string, boardId: string, newPoin
   }
   socket.emit('points', {
     action: 'add',
-    users: boardService.getUserIdsByBoardsIds(createdPoints.map(item => item.boardId)),
+    users: await boardService.getUserIdsByBoardsIds(createdPoints.map(item => item.boardId)),
     ids: createdPoints.map(item => item._id),
     guid,
     notify: false,
@@ -53,7 +53,7 @@ export const updatePoint = async (id: string, params: any, guid: string, initUse
   if (emit) {
     socket.emit('points', {
       action: 'update',
-      users: boardService.getUserIdsByBoardsIds([updatedPoint.boardId]),
+      users: await boardService.getUserIdsByBoardsIds([updatedPoint.boardId]),
       ids: [updatedPoint._id],
       guid,
       notify,
@@ -69,7 +69,7 @@ export const deletePointById = async (pointId: string, guid: string, initUser: s
   if (emit) {
     socket.emit('points', {
       action: 'delete',
-      users: boardService.getUserIdsByBoardsIds([deletedPoint.boardId]),
+      users: await boardService.getUserIdsByBoardsIds([deletedPoint.boardId]),
       ids: [deletedPoint._id],
       guid,
       notify,
@@ -87,7 +87,7 @@ export const deletePointsByParams = async (params: any, guid: string, initUser: 
   }
   socket.emit('points', {
     action: 'delete',
-    users: boardService.getUserIdsByBoardsIds(deletedPoints.map(item => item.boardId)),
+    users: await boardService.getUserIdsByBoardsIds(deletedPoints.map(item => item.boardId)),
     ids: deletedPoints.map(item => item._id),
     guid,
     notify: false,

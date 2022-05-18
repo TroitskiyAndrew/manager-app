@@ -10,7 +10,7 @@ export const createFile = async (params: any, guid: string, initUser: string, em
   if (emit) {
     socket.emit('files', {
       action: 'add',
-      users: boardService.getUserIdsByBoardsIds([newFile.boardId]),
+      users: await boardService.getUserIdsByBoardsIds([newFile.boardId]),
       ids: [newFile._id],
       guid,
       notify,
@@ -41,7 +41,7 @@ export const deleteFileById = async (id: string, guid: string, initUser: string,
   if (emit) {
     socket.emit('files', {
       action: 'delete',
-      users: boardService.getUserIdsByBoardsIds([deletedFile.boardId]),
+      users: await boardService.getUserIdsByBoardsIds([deletedFile.boardId]),
       ids: [deletedFile._id],
       guid,
       notify,
@@ -59,7 +59,7 @@ export const deletedFilesByTask = async (taskId: string, guid: string, initUser:
   }
   socket.emit('files', {
     action: 'delete',
-    users: boardService.getUserIdsByBoardsIds(deletedFiles.map(item => item.boardId)),
+    users: await boardService.getUserIdsByBoardsIds(deletedFiles.map(item => item.boardId)),
     ids: deletedFiles.map(item => item._id),
     guid,
     notify: false,

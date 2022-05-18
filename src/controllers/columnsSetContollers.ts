@@ -35,7 +35,7 @@ export const updateSetOfColumns = async (req: Request, res: Response) => {
   }
   socket.emit('columns', {
     action: 'update',
-    users: boardService.getUserIdsByBoardsIds(updatedColumns.map(item => item.boardId)),
+    users: await boardService.getUserIdsByBoardsIds(updatedColumns.map(item => item.boardId)),
     ids: updatedColumns.map(item => item._id),
     guid,
     notify: false,
@@ -85,7 +85,7 @@ export const createSetOfColumns = async (req: Request, res: Response) => {
 
   socket.emit('columns', {
     action: 'add',
-    users: boardService.getUserIdsByBoardsIds(createdColumns.map(item => item.boardId)),
+    users: await boardService.getUserIdsByBoardsIds(createdColumns.map(item => item.boardId)),
     ids: createdColumns.map(item => item._id),
     guid,
     notify: true,

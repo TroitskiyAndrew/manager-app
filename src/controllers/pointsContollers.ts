@@ -98,7 +98,7 @@ export const updateSetOfPoints = async (req: Request, res: Response) => {
   }
   socket.emit('points', {
     action: 'update',
-    users: boardService.getUserIdsByBoardsIds(updatedPoints.map(item => item.boardId)),
+    users: await boardService.getUserIdsByBoardsIds(updatedPoints.map(item => item.boardId)),
     ids: updatedPoints.map(item => item._id),
     guid,
     notify: false,

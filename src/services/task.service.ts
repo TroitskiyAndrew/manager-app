@@ -11,7 +11,7 @@ export const createTask = async (params: any, guid: string, initUser: string, em
   if (emit) {
     socket.emit('tasks', {
       action: 'add',
-      users: boardService.getUserIdsByBoardsIds([newTask.boardId]),
+      users: await boardService.getUserIdsByBoardsIds([newTask.boardId]),
       ids: [newTask._id],
       guid,
       notify,
@@ -39,7 +39,7 @@ export const updateTask = async (id: string, params: any, guid: string, initUser
   if (emit) {
     socket.emit('tasks', {
       action: 'update',
-      users: boardService.getUserIdsByBoardsIds([updatedTask.boardId]),
+      users: await boardService.getUserIdsByBoardsIds([updatedTask.boardId]),
       ids: [updatedTask._id],
       guid,
       notify,
@@ -57,7 +57,7 @@ export const deleteTaskById = async (taskId: string, guid: string, initUser: str
   if (emit) {
     socket.emit('tasks', {
       action: 'delete',
-      users: boardService.getUserIdsByBoardsIds([deletedTask.boardId]),
+      users: await boardService.getUserIdsByBoardsIds([deletedTask.boardId]),
       ids: [deletedTask._id],
       guid,
       notify,
@@ -75,7 +75,7 @@ export const deleteTaskByParams = async (params: any, guid: string, initUser: st
   }
   socket.emit('tasks', {
     action: 'delete',
-    users: boardService.getUserIdsByBoardsIds(deletedTasks.map(item => item.boardId)),
+    users: await boardService.getUserIdsByBoardsIds(deletedTasks.map(item => item.boardId)),
     ids: deletedTasks.map(item => item._id),
     guid,
     notify: false,
@@ -95,7 +95,7 @@ export const clearUserInTasks = async (userId: string, guid: string, initUser: s
   }
   socket.emit('tasks', {
     action: 'update',
-    users: boardService.getUserIdsByBoardsIds(clearedTasks.map(item => item.boardId)),
+    users: await boardService.getUserIdsByBoardsIds(clearedTasks.map(item => item.boardId)),
     ids: clearedTasks.map(item => item._id),
     guid,
     notify: false,
