@@ -113,6 +113,8 @@ export const getUserIdsByBoardsIds = async (boards: string[]) => {
 
 export const getBordsIdsByUserId = async (user: string) => {
   const allboards = await board.find({});
+  console.log(user);
   const interestedBoards = allboards.filter(item => item.users.includes(user) || item.owner === user);
+  console.log(interestedBoards);
   return interestedBoards.map(board => board._id);
 }
