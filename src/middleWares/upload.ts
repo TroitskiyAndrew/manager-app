@@ -26,7 +26,7 @@ export const upload = multer({
       const path = `files/${taskId}-${name}`
       const existFile = await fileService.findOneFile({ taskId, name });
       if (existFile) {
-        req.params.error = "file exist";
+        req.params.error = "${notifications.file.exoistError}";
         next(null, false);
       }
       const guid = req.header('Guid') || 'undefined';
@@ -35,7 +35,7 @@ export const upload = multer({
       req.params.fileId = newFile._id;
       next(null, true)
     } else {
-      req.params.error = "file not allowed";
+      req.params.error = "${notifications.file.typeError}";
       next(null, false);
     }
 
