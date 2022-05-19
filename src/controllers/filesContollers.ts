@@ -42,7 +42,7 @@ export const findFiles = async (req: Request, res: Response) => {
 };
 
 export const uploadFile = async (req: Request, res: Response) => {
-
+  console.log('uploadFile', req.params.error);
   if (req.params.error === "file exist") {
     return res.status(402).send(createError(402, "file exist"));
   } else if (req.params.error === "file not allowed") {
