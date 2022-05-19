@@ -12,7 +12,7 @@ export const createFile = async (params: any, guid: string, initUser: string, em
       action: 'add',
       users: await boardService.getUserIdsByBoardsIds([newFile.boardId]),
       ids: [newFile._id],
-      guid,
+      guid: 'doesnt metter',
       notify,
       initUser
     });
