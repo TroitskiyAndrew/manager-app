@@ -5,7 +5,7 @@ import * as fileService from '../services/file.service';
 
 const storage = multer.diskStorage({
   destination: (req, file, next) => {
-    next(null, path.join(__dirname, '/files'))
+    next(null, path.join(__dirname, 'files/'))
   },
   filename: (req, fileFromReq, next) => {
     const taskId = req.body.taskId
