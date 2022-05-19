@@ -1,10 +1,11 @@
 import multer from 'multer';
+import path from 'path';
 import { checkBody } from '../services/error.service';
 import * as fileService from '../services/file.service';
 
 const storage = multer.diskStorage({
   destination: (req, file, next) => {
-    next(null, 'files/')
+    next(null, path.join(__dirname, '/files'))
   },
   filename: (req, fileFromReq, next) => {
     const taskId = req.body.taskId
