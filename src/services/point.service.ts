@@ -31,7 +31,7 @@ export const createSetOfPoints = async (taskId: string, boardId: string, newPoin
     action: 'add',
     users: await boardService.getUserIdsByBoardsIds(createdPoints.map(item => item.boardId)),
     ids: createdPoints.map(item => item._id),
-    guid,
+    guid: 'doesnt metter',
     notify: false,
     initUser,
   });
