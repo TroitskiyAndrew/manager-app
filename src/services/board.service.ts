@@ -34,11 +34,23 @@ export const findBoardsByUser = async (userId: string) => {
 
 export const updateBoard = async (id: string, params: any, guid: string, initUser: string, emit = true, notify = true) => {
   const boardId = new ObjectId(id);
+  const oldVersion = await findBoardById(id);
+  const deletedUsers = oldVersion.users.filter((user: string) => !params.users.includes(user));
   const updatedBoard = await board.findByIdAndUpdate(boardId, params, { new: true });
   if (emit) {
     socket.emit('boards', {
       action: 'update',
       users: await getUserIdsByBoardsIds([updatedBoard._id]),
+      ids: [updatedBoard._id],
+      guid,
+      notify,
+      initUser
+    });
+  }
+  if (deletedUsers.length > 0) {
+    socket.emit('boards', {
+      action: 'delete',
+      users: deletedUsers,
       ids: [updatedBoard._id],
       guid,
       notify,
