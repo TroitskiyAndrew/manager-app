@@ -51,11 +51,12 @@ export const updateBoard = async (id: string, params: any, guid: string, initUse
 export const deleteBoardById = async (boardId: string, guid: string, initUser: string, emit = true, notify = true) => {
   const id = new ObjectId(boardId);
   const deletedBoard = await board.findByIdAndDelete(id);
+  const users = [...deletedBoard.users, deletedBoard.owner]
   await columnService.deleteColumnByParams({ boardId }, guid, initUser);
   if (emit) {
     socket.emit('boards', {
       action: 'delete',
-      users: await getUserIdsByBoardsIds([deletedBoard._id]),
+      users,
       ids: [deletedBoard._id],
       guid,
       notify,
@@ -71,6 +72,8 @@ export const deleteBoardByParams = async (params: any, guid: string, initUser: s
   for (const onBoard of boards) {
     deletedBoards.push(await deleteBoardById(onBoard._id, guid, initUser, false));
   }
+  let users: string[] = [];
+  deletedBoards.forEach(board => users = [...users, ...board.users, board.owner])
   socket.emit('boards', {
     action: 'delete',
     users: await getUserIdsByBoardsIds(deletedBoards.map(item => item._id)),
