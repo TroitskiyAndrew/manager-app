@@ -89,7 +89,7 @@ export const deletePointsByParams = async (params: any, guid: string, initUser: 
     action: 'delete',
     users: await boardService.getUserIdsByBoardsIds(deletedPoints.map(item => item.boardId)),
     ids: deletedPoints.map(item => item._id),
-    guid,
+    guid: 'doesnt metter',
     notify: false,
     initUser,
   });

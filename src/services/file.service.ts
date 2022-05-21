@@ -61,7 +61,7 @@ export const deletedFilesByTask = async (taskId: string, guid: string, initUser:
     action: 'delete',
     users: await boardService.getUserIdsByBoardsIds(deletedFiles.map(item => item.boardId)),
     ids: deletedFiles.map(item => item._id),
-    guid,
+    guid: 'doesnt metter',
     notify: false,
     initUser,
   });

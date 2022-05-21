@@ -75,7 +75,7 @@ export const deleteColumnByParams = async (params: any, guid: string, initUser: 
     action: 'delete',
     users: await boardService.getUserIdsByBoardsIds(deletedColumns.map(item => item.boardId)),
     ids: deletedColumns.map(item => item._id),
-    guid,
+    guid: 'doesnt metter',
     notify: false,
     initUser,
   });
