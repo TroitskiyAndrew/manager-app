@@ -77,7 +77,7 @@ export const deleteTaskByParams = async (params: any, guid: string, initUser: st
     action: 'delete',
     users: await boardService.getUserIdsByBoardsIds(deletedTasks.map(item => item.boardId)),
     ids: deletedTasks.map(item => item._id),
-    guid,
+    guid: 'doesnt metter',
     notify: false,
     initUser,
   });
