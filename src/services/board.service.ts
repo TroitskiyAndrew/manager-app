@@ -9,7 +9,7 @@ export const createBoard = async (params: any, guid: string, initUser: string, e
   if (emit) {
     socket.emit('boards', {
       action: 'add',
-      users: await getUserIdsByBoardsIds([newBoard._id]),
+      users: [params.owner, ...params.users],
       ids: [newBoard._id],
       guid,
       notify,
